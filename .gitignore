@@ -10,7 +10,7 @@ out/
 # foundry
 packages/contracts/out/
 packages/contracts/cache/
-packages/contracts/broadcast/**/dry-run/
+packages/contracts/broadcast/
 
 # env / secrets
 .env
