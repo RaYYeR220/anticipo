@@ -1,0 +1,23 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# next / vercel
+.next/
+out/
+.vercel/
+
+# foundry
+packages/contracts/out/
+packages/contracts/cache/
+packages/contracts/broadcast/**/dry-run/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+*.log
+.remember/
