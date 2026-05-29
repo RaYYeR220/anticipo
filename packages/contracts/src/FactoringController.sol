@@ -109,11 +109,14 @@ contract FactoringController is EIP712, Ownable {
         uint256 principal = inv.advanceAmount;
         uint256 remainder = inv.faceAmount - principal - fee;
 
+        // Effects before interactions (CEI). USDC is a hookless ERC20, so the
+        // transfers below cannot re-enter; ordering effects first is belt-and-suspenders.
+        pool.notifyRepayment(principal);
+        registry.markRepaid(id, block.timestamp <= inv.dueDate);
+
         usdc.safeTransferFrom(msg.sender, address(pool), principal + fee);
         if (remainder > 0) usdc.safeTransferFrom(msg.sender, inv.smb, remainder);
 
-        pool.notifyRepayment(principal);
-        registry.markRepaid(id, block.timestamp <= inv.dueDate);
         emit Settled(id, msg.sender, principal, fee, remainder);
     }
 
