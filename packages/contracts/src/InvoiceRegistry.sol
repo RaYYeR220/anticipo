@@ -41,6 +41,7 @@ contract InvoiceRegistry is ERC721, Ownable {
     event InvoiceDefaulted(uint256 indexed id);
 
     error NotController();
+    error InvalidStatus(uint256 id, Status current);
 
     modifier onlyController() {
         if (msg.sender != controller) revert NotController();
@@ -84,8 +85,11 @@ contract InvoiceRegistry is ERC721, Ownable {
         emit InvoiceMinted(id, smb, buyer, faceAmount, advanceAmount);
     }
 
+    /// @dev `totalVolumeRepaid` accumulates the invoice FACE amount (the buyer's full
+    /// payment obligation settled into escrow), not the advance — by design.
     function markRepaid(uint256 id, bool onTime) external onlyController {
         Invoice storage inv = _invoices[id];
+        if (inv.status != Status.Financed) revert InvalidStatus(id, inv.status);
         inv.status = Status.Repaid;
         Reputation storage rep = _buyerRep[inv.buyer];
         if (onTime) rep.paidOnTime++; else rep.paidLate++;
@@ -95,11 +99,14 @@ contract InvoiceRegistry is ERC721, Ownable {
 
     function markDefaulted(uint256 id) external onlyController {
         Invoice storage inv = _invoices[id];
+        if (inv.status != Status.Financed) revert InvalidStatus(id, inv.status);
         inv.status = Status.Defaulted;
         _buyerRep[inv.buyer].defaulted++;
         emit InvoiceDefaulted(id);
     }
 
+    /// @dev Returns a zero-value struct (status == None) for IDs never minted;
+    /// callers must check `status != Status.None`.
     function getInvoice(uint256 id) external view returns (Invoice memory) {
         return _invoices[id];
     }

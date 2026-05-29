@@ -69,4 +69,28 @@ contract InvoiceRegistryTest is Test {
         uint256 b = _mint();
         assertEq(b, a + 1);
     }
+
+    function test_cannotRepaidTwice() public {
+        uint256 id = _mint();
+        vm.prank(controller);
+        reg.markRepaid(id, true);
+        vm.prank(controller);
+        vm.expectRevert(abi.encodeWithSelector(InvoiceRegistry.InvalidStatus.selector, id, InvoiceRegistry.Status.Repaid));
+        reg.markRepaid(id, true);
+    }
+
+    function test_cannotDefaultAfterRepaid() public {
+        uint256 id = _mint();
+        vm.prank(controller);
+        reg.markRepaid(id, true);
+        vm.prank(controller);
+        vm.expectRevert(abi.encodeWithSelector(InvoiceRegistry.InvalidStatus.selector, id, InvoiceRegistry.Status.Repaid));
+        reg.markDefaulted(id);
+    }
+
+    function test_cannotMarkNonexistentInvoice() public {
+        vm.prank(controller);
+        vm.expectRevert(abi.encodeWithSelector(InvoiceRegistry.InvalidStatus.selector, uint256(999), InvoiceRegistry.Status.None));
+        reg.markRepaid(999, true);
+    }
 }
