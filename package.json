@@ -1,0 +1,7 @@
+{
+  "name": "anticipo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Anticipo — AI invoice-factoring on Arbitrum",
+  "packageManager": "pnpm@9.15.0"
+}
