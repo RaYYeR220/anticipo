@@ -4,12 +4,12 @@ export interface Quote {
   smb: Address;
   buyer: Address;
   faceAmount: bigint;
-  dueDate: number;          // unix seconds (uint64)
+  dueDate: bigint;          // unix seconds (uint64 → viem infers bigint)
   advanceRatioBps: number;  // uint16
   feeBps: number;           // uint16
   advanceAmount: bigint;
   docHash: Hex;             // bytes32
-  expiry: number;           // unix seconds (uint64)
+  expiry: bigint;           // unix seconds (uint64 → viem infers bigint)
   nonce: bigint;
 }
 
@@ -17,7 +17,7 @@ export interface InvoiceInput {
   smb: Address;
   buyer: Address;
   faceAmount: bigint;
-  dueDate: number;
+  dueDate: bigint;          // unix seconds (uint64); flows into Quote.dueDate
   docHash: Hex;
 }
 

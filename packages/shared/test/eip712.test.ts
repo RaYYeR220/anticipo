@@ -10,12 +10,12 @@ const quote: Quote = {
   smb: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
   buyer: "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
   faceAmount: 100_000_000n,
-  dueDate: 2_000_000_000,
+  dueDate: 2_000_000_000n,
   advanceRatioBps: 8000,
   feeBps: 200,
   advanceAmount: 80_000_000n,
   docHash: "0x1234567890123456789012345678901234567890123456789012345678901234",
-  expiry: 2_000_003_600,
+  expiry: 2_000_003_600n,
   nonce: 1n,
 };
 
