@@ -25,6 +25,13 @@ export async function priceWithLLM(
     advanceAmount = input.faceAmount > feeAmount ? input.faceAmount - feeAmount : 0n;
   }
 
+  // A zero advance would produce a signed quote the contract always rejects
+  // (FactoringController reverts BadTerms on advanceAmount == 0). Surface it as a
+  // decline so the caller never submits an always-reverting quote.
+  if (advanceAmount === 0n) {
+    throw new Error("priceWithLLM: zero advance — underwriter declined or terms not financeable");
+  }
+
   return {
     riskScore,
     advanceRatioBps,

@@ -1,4 +1,4 @@
-import type { Address, PublicClient, WalletClient } from "viem";
+import type { Address } from "viem";
 import { MockUSDC, LiquidityPool, InvoiceRegistry, FactoringController } from "../../src/abi.generated.js";
 
 export interface DeployedAddresses {
@@ -8,9 +8,12 @@ export interface DeployedAddresses {
   controller: Address;
 }
 
+// `wallet`/`pub` are typed `any` here: viem's concrete client types don't cleanly
+// assign to the parameterized WalletClient/PublicClient generics (method variance),
+// and this is a test-only helper. ABIs are passed `as any` for the same reason.
 async function deployOne(
-  wallet: WalletClient,
-  pub: PublicClient,
+  wallet: any,
+  pub: any,
   artifact: { abi: readonly unknown[]; bytecode: `0x${string}` },
   args: readonly unknown[],
 ): Promise<Address> {
@@ -22,8 +25,8 @@ async function deployOne(
 
 /// Deploys the full stack and wires the controller, mirroring Deploy.s.sol.
 export async function deployStack(
-  wallet: WalletClient,
-  pub: PublicClient,
+  wallet: any,
+  pub: any,
   underwriter: Address,
 ): Promise<DeployedAddresses> {
   const usdc = await deployOne(wallet, pub, MockUSDC, []);

@@ -48,4 +48,9 @@ describe("priceWithLLM", () => {
     const d = await priceWithLLM(features, input, llm);
     expect(d.riskScore).toBe(100);
   });
+
+  it("throws on a zero advance (decline) instead of returning an always-reverting quote", async () => {
+    const llm = fakeLLM({ riskScore: 100, advanceRatioBps: 0, feeBps: 100, rationale: "decline", keyFactors: [] });
+    await expect(priceWithLLM(features, input, llm)).rejects.toThrow(/zero advance/);
+  });
 });
