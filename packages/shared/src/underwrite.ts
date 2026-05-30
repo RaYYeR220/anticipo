@@ -1,15 +1,11 @@
 import type { Account, Address, Hex } from "viem";
-import type { ContractAddresses } from "./features.js";
+import type { ContractAddresses, MinimalPublicClient } from "./features.js";
 import { extractFeatures } from "./features.js";
 import { priceWithLLM } from "./pricing.js";
 import { buildQuote, signQuote } from "./sign.js";
 import { buildQuoteDomain } from "./eip712.js";
 import type { InvoiceInput, Quote, UnderwritingDecision } from "./types.js";
 import type { UnderwriterLLM } from "./llm.js";
-
-interface MinimalPublicClient {
-  readContract(args: { address: Address; abi: readonly unknown[]; functionName: string; args?: readonly unknown[] }): Promise<any>;
-}
 
 export interface UnderwriteDeps {
   client: MinimalPublicClient;

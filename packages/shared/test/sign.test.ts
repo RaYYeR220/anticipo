@@ -22,9 +22,14 @@ describe("buildQuote / signQuote", () => {
   it("builds a Quote from input + decision with the given nonce/expiry", () => {
     const q = buildQuote(input, decision, { nonce: 5n, expiry: 2_000_003_600n });
     expect(q.smb).toBe(input.smb);
+    expect(q.buyer).toBe(input.buyer);
+    expect(q.faceAmount).toBe(input.faceAmount);
+    expect(q.dueDate).toBe(input.dueDate);
     expect(q.advanceAmount).toBe(80_000_000n);
     expect(q.advanceRatioBps).toBe(8000);
+    expect(q.feeBps).toBe(200);
     expect(q.docHash).toBe(input.docHash);
+    expect(q.expiry).toBe(2_000_003_600n);
     expect(q.nonce).toBe(5n);
   });
 

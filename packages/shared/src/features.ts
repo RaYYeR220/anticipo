@@ -7,7 +7,7 @@ export interface ContractAddresses {
   pool: Address;
 }
 
-interface MinimalPublicClient {
+export interface MinimalPublicClient {
   readContract(args: { address: Address; abi: readonly unknown[]; functionName: string; args?: readonly unknown[] }): Promise<any>;
 }
 
