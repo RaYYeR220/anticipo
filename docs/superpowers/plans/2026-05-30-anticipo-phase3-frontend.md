@@ -78,6 +78,32 @@ apps/web/
 
 Split by responsibility: `lib/*` is pure/browser-safe; `server/*` is server-only (imports the underwriter key); `hooks/*` wrap wagmi; `components/*` are presentational + wired to hooks. The API route is a thin adapter over `server/underwriterService.ts` (so the logic is testable without Next's request machinery).
 
+Plus a throwaway design-exploration folder (deleted or kept as reference after the look is chosen):
+```
+apps/web/design-lab/
+  index.html                 # gallery index linking all variants side by side
+  variant-01..20.html        # 15-20 self-contained static mockups (no build, sample data)
+  CHOICE.md                  # records the winning direction + which elements to take from runners-up
+```
+
+---
+
+## Task 0: Design exploration — 15–20 variants, then assemble the best (DO THIS FIRST)
+
+**User-directed process:** before building real views, generate **15–20 distinct, self-contained static HTML mockups** of the product's look, review them together in a browser, and distill the winner (or the best elements of several) into the design system that Tasks 6–9 implement. Each mockup is one `.html` file with inline `<style>` (or a Tailwind CDN `<script>`), hardcoded sample data, no app logic — so they open instantly and compare side by side.
+
+**Invoke the `frontend-design` skill** to make the variants genuinely distinct and production-grade — not 20 shades of the same template. Spread them across real aesthetic directions, e.g.: fintech-clean / editorial-serif / dark-pro-trading / warm-LATAM / glassmorphic / neo-brutalist / Swiss-grid / terminal-mono / soft-pastel-card / high-contrast-accessible / magazine / dashboard-dense / minimal-luxe / playful-rounded / data-viz-forward, etc. Vary type, color, density, motion cues, and component shape — not just hue.
+
+**What each variant must depict** (so the choice covers the demo): the **SMB hero screen** — an invoice-submit form on one side and the **AI Underwriting result card** on the other (risk score, advance ratio, fee, the USDC amount advanced, the AI rationale sentence, keyFactors chips, an "Accept & get USDC" CTA). Include a compact header with a wallet/email-login button and a small "pool stats" strip, so the chosen direction implies the LP/Buyer views too. Use realistic sample numbers (face 100 USDC → 80% advance, 2% fee, clean-buyer rationale).
+
+- [ ] **Step 1: Generate the variants in parallel.** Produce 15–20 files `apps/web/design-lab/variant-NN.html`, each a distinct full-screen mockup per the above. (Dispatch several subagents in parallel, each owning a disjoint range of variant numbers and a distinct set of aesthetic directions, to avoid overlap. Each subagent invokes frontend-design.)
+- [ ] **Step 2: Build the gallery index** `apps/web/design-lab/index.html` — a page that embeds or links all variants (e.g., an iframe grid or a labeled link list with thumbnails) so they can be reviewed at a glance. Open it locally (or via the Playwright/`run` tooling) and capture screenshots.
+- [ ] **Step 3: Present to the user and choose.** Show the gallery (screenshots + the local path). The user picks the winning direction and any elements to graft from runners-up. Record the decision in `apps/web/design-lab/CHOICE.md` (winning variant number, palette/tokens, type scale, component shapes, what to borrow).
+- [ ] **Step 4: Distill into the design system.** Translate the chosen direction into concrete tokens + primitives that later tasks consume: update `src/app/globals.css` (CSS variables / Tailwind theme) and the `tailwind.config.ts` colors to match, and define the `src/components/ui/*` primitives (Button, Card, Stat, Field, Badge) in that style. This is the single source of truth Tasks 6–9 build against.
+- [ ] **Step 5: Commit** `git add apps/web/design-lab apps/web/src/app/globals.css apps/web/tailwind.config.ts apps/web/src/components/ui && git commit -m "design(web): explore 15-20 directions, choose look, distill design system"`
+
+> Tasks 6–9 (the SMB/LP/Buyer/landing views) MUST implement the design system chosen here — reference `design-lab/CHOICE.md` and the `ui/*` primitives, not a fresh ad-hoc style per view. Note: Task 1 (scaffold) only needs to exist before Step 4 (tokens/primitives live in `src/`); the standalone mockups in Steps 1–3 need no scaffold and can be produced first.
+
 ---
 
 ## Task 1: Scaffold `apps/web` (Next.js + Tailwind + deps)
