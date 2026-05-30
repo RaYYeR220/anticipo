@@ -19,6 +19,8 @@ Phase 1 is complete and merged to `main`: four contracts in `packages/contracts`
 - On-chain clamps the signer must respect: `advanceRatioBps ≤ 9500`, `feeBps ≤ 2000`, `advanceAmount > 0`, `advanceAmount ≤ faceAmount*advanceRatioBps/10000`, `advanceAmount + faceAmount*feeBps/10000 ≤ faceAmount`. `nonce` must be unique per quote (`usedNonce` rejects replay). `requestFinancing` requires `msg.sender == q.smb`.
 - Reputation read (the AI's signal): `getBuyerReputation(address) → (uint32 paidOnTime, uint32 paidLate, uint32 defaulted, uint256 totalVolumeRepaid, uint64 firstSeen)`. Pool stats: `totalAssets()`, `availableLiquidity()`, `outstandingPrincipal()`. Invoice: `getInvoice(uint256) → Invoice` (check `status != 0/None`).
 
+> **Type convention (applied throughout; corrected after Task 2 review):** `Quote.dueDate`, `Quote.expiry`, and `InvoiceInput.dueDate` are **`bigint`** — viem infers EIP-712 `uint64` fields as `bigint`, so `number` causes `tsc` errors at `signTypedData` call sites. `advanceRatioBps`/`feeBps` (uint16) stay `number`. Consequences in later tasks: all `dueDate`/`expiry` test literals use the `n` suffix (e.g. `2_000_000_000n`); `buildPrompt` formats the date via `new Date(Number(input.dueDate) * 1000)`; `underwrite` computes `expiry: BigInt(deps.nowSec + ttl)`; the anvil test uses `dueDate: block.timestamp + 30n * 86_400n` (viem's `block.timestamp` is already `bigint`) and passes `nowSec: Number(block.timestamp)`.
+
 Environment: Windows 11; bash via the Bash tool (git-bash); Node v24, npm 11; `forge`/`cast`/`anvil` 1.7.1 on PATH; `pnpm` not yet installed (Task 1 enables it via corepack). Work on a branch `feat/phase2-underwriter` off `main` (the controller/coordinator sets this up, not the implementer). CRLF git warnings on Windows are expected/harmless.
 
 ---
@@ -269,12 +271,12 @@ export interface Quote {
   smb: Address;
   buyer: Address;
   faceAmount: bigint;
-  dueDate: number;          // unix seconds (uint64)
+  dueDate: bigint;          // unix seconds (uint64 → viem infers bigint)
   advanceRatioBps: number;  // uint16
   feeBps: number;           // uint16
   advanceAmount: bigint;
   docHash: Hex;             // bytes32
-  expiry: number;           // unix seconds (uint64)
+  expiry: bigint;           // unix seconds (uint64 → viem infers bigint)
   nonce: bigint;
 }
 
@@ -282,7 +284,7 @@ export interface InvoiceInput {
   smb: Address;
   buyer: Address;
   faceAmount: bigint;
-  dueDate: number;
+  dueDate: bigint;          // unix seconds (uint64); flows into Quote.dueDate
   docHash: Hex;
 }
 
