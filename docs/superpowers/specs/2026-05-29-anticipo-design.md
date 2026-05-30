@@ -66,8 +66,14 @@ LATAM SMBs sell on credit and wait 60–90 days to get paid while payroll and su
   1. Input: `{ faceAmount, buyer, dueDate, docHash }`.
   2. **Deterministic feature extraction** (viem reads from `InvoiceRegistry`): buyer's count of invoices, % paid on time, average delay days, defaults, total volume, first-seen age; SMB's prior repayment track record; pool utilization/available liquidity.
   3. **Gemini (via OpenRouter)** with a strict JSON schema (structured output) returns `{ riskScore 0–100, advanceRatioBps, feeBps, maxAdvance, rationale, keyFactors[] }`. Features are passed as structured context; the model explains and prices.
-  4. Server signs the EIP-712 `UnderwritingQuote` with the underwriter key and returns quote + signature + rationale to the frontend.
+  4. Server signs the EIP-712 `Quote` with the underwriter key and returns quote + signature + rationale to the frontend.
   - Guardrails: deterministic min/max clamps on ratio/fee so a model hiccup can't produce an absurd quote; the rationale must cite the supplied features.
+
+> **Canonical EIP-712 interface (source of truth = the deployed `FactoringController`, not this prose).** Phase 2's off-chain signer MUST match the contract exactly, verified against `FactoringController.hashQuote(q)`:
+> - Domain: `EIP712("Anticipo", "1")`, bound to `chainId` + the controller address.
+> - Struct (field order is load-bearing): `Quote(address smb,address buyer,uint256 faceAmount,uint64 dueDate,uint16 advanceRatioBps,uint16 feeBps,uint256 advanceAmount,bytes32 docHash,uint64 expiry,uint256 nonce)`.
+> - The signer computes `advanceAmount` itself (= `faceAmount * advanceRatioBps / 10000`, capped); there is no separate `maxAdvance` on-chain field. `nonce` must be globally unique per quote (monotonic counter or UUID-derived); `usedNonce(nonce)` rejects replay. Term clamps enforced on-chain: `advanceRatioBps ≤ 9500`, `feeBps ≤ 2000`, `advanceAmount + fee ≤ faceAmount`.
+> - Reputation read for features: `getBuyerReputation(address)` → `{paidOnTime, paidLate, defaulted, totalVolumeRepaid, firstSeen}`. Invoice read: `getInvoice(id)` (check `status != None`). Pool stats: `totalAssets()`, `availableLiquidity()`, `outstandingPrincipal()`, `convertToAssets()`. No on-chain enumeration of an address's invoices — reconstruct from `InvoiceMinted`/`Settled`/`Defaulted` events (all indexed by `id`).
 - **Seeder** — TS (viem) + Foundry script: deploy stack, mint MockUSDC, fund pool from an LP account, create 2–3 buyer profiles by running real historical settlements/defaults through the contracts so the AI reads genuine on-chain history.
 
 ## 7. Frontend (Next.js App Router + wagmi/viem + Tailwind + Privy)
