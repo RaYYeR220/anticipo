@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anticipo — Trading Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#06090c;
+    --bg2:#0a0f14;
+    --panel:#0d141b;
+    --panel2:#101921;
+    --line:#16222c;
+    --line2:#1d2c38;
+    --txt:#d7e3ec;
+    --dim:#6c8294;
+    --dimmer:#46596a;
+    --green:#1cf7a1;
+    --green-d:#0fae73;
+    --cyan:#3ad8ff;
+    --amber:#ffc24b;
+    --red:#ff5d6c;
+    --glow:0 0 0 1px rgba(28,247,161,.18), 0 0 28px rgba(28,247,161,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(58,216,255,.06), transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, rgba(28,247,161,.05), transparent 60%),
+      var(--bg);
+    color:var(--txt);
+    font-family:'Archivo',sans-serif;
+    font-feature-settings:"tnum" 1;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+  .num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+  /* scanline texture */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
+    mix-blend-mode:overlay;
+  }
+
+  .variant-tag{
+    position:fixed;left:14px;bottom:14px;z-index:50;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;
+    color:var(--green);background:rgba(8,11,14,.85);border:1px solid var(--line2);
+    padding:5px 9px;border-radius:4px;text-transform:uppercase;
+    box-shadow:var(--glow);
+  }
+
+  /* ===== HEADER ===== */
+  header{
+    position:sticky;top:0;z-index:30;
+    border-bottom:1px solid var(--line2);
+    background:linear-gradient(180deg, rgba(10,15,20,.96), rgba(8,11,14,.92));
+    backdrop-filter:blur(8px);
+  }
+  .topbar{display:flex;align-items:center;gap:22px;padding:0 22px;height:58px;max-width:1480px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;letter-spacing:-.01em}
+  .brand .logo{width:26px;height:26px;display:grid;place-items:center;border:1px solid var(--green-d);border-radius:6px;
+    background:radial-gradient(circle at 35% 30%, rgba(28,247,161,.35), rgba(28,247,161,.03));box-shadow:var(--glow)}
+  .brand .logo svg{display:block}
+  .brand b{color:var(--green)}
+  .live{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);
+    border:1px solid var(--line2);border-radius:999px;padding:3px 8px;letter-spacing:.08em}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  .pool{display:flex;align-items:stretch;gap:0;margin-left:6px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+  .stat{display:flex;flex-direction:column;gap:2px;padding:8px 16px;border-right:1px solid var(--line);min-width:96px}
+  .stat:last-child{border-right:0}
+  .stat .k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+  .stat .v{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;letter-spacing:-.02em}
+  .stat .v.up{color:var(--green)}
+  .stat .v.cy{color:var(--cyan)}
+
+  .spacer{flex:1}
+  .wallet{display:flex;align-items:center;gap:10px;border:1px solid var(--line2);border-radius:999px;padding:5px 6px 5px 12px;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));cursor:pointer;transition:.18s}
+  .wallet:hover{border-color:var(--green-d);box-shadow:var(--glow)}
+  .wallet .meta{display:flex;flex-direction:column;line-height:1.15}
+  .wallet .em{font-size:12px;font-weight:600}
+  .wallet .ad{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green)}
+  .ava{width:30px;height:30px;border-radius:50%;background:conic-gradient(from 200deg,var(--green),var(--cyan),var(--amber),var(--green));
+    display:grid;place-items:center;font-weight:800;font-size:12px;color:#04140d}
+
+  /* ===== LAYOUT ===== */
+  .wrap{max-width:1480px;margin:0 auto;padding:24px 22px 80px}
+  .crumbs{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);margin-bottom:16px}
+  .crumbs b{color:var(--txt)}
+  .grid{display:grid;grid-template-columns:minmax(380px,1fr) minmax(560px,1.45fr);gap:20px;align-items:start}
+
+  .card{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line2);border-radius:12px;overflow:hidden}
+  .card-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+  .card-h .t{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;letter-spacing:.02em;text-transform:uppercase}
+  .card-h .t svg{color:var(--green)}
+  .tag-sm{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:var(--dim);
+    border:1px solid var(--line2);border-radius:4px;padding:3px 7px;text-transform:uppercase}
+
+  /* ===== FORM ===== */
+  .body{padding:18px}
+  .field{margin-bottom:16px}
+  .lab{display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;
+    letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-bottom:7px}
+  .inp{border:1px solid var(--line2);border-radius:8px;background:var(--bg);padding:11px 13px;transition:.16s}
+  .inp:hover{border-color:var(--line2)}
+  .inp.focus{border-color:var(--green-d);box-shadow:var(--glow)}
+  .inp .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .addr{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--cyan)}
+  .resolved{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12px;color:var(--dim)}
+  .resolved b{color:var(--txt);font-weight:600}
+  .chk{width:16px;height:16px;border-radius:50%;background:rgba(28,247,161,.12);display:grid;place-items:center;color:var(--green);font-size:10px}
+
+  .amt{display:flex;align-items:baseline;gap:8px}
+  .amt .big{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .amt .cur{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green)}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+  .filechip{display:flex;align-items:center;gap:10px;border:1px dashed var(--line2);border-radius:8px;padding:10px 12px;background:var(--bg)}
+  .filechip .ic{width:30px;height:30px;border-radius:6px;background:rgba(255,93,108,.10);display:grid;place-items:center;color:var(--red);font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace}
+  .filechip .fn{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600}
+  .filechip .sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim)}
+  .filechip .x{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);border:1px solid var(--line2);padding:2px 6px;border-radius:4px}
+
+  .btn{width:100%;border:0;border-radius:9px;padding:13px;font-family:'Archivo';font-weight:800;font-size:14px;letter-spacing:.02em;cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;gap:9px}
+  .btn-primary{background:linear-gradient(180deg,var(--green),var(--green-d));color:#03130c;box-shadow:0 6px 22px rgba(28,247,161,.25)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(28,247,161,.4)}
+  .btn-ghost{background:transparent;border:1px solid var(--line2);color:var(--txt)}
+
+  /* ===== AI CARD ===== */
+  .ai{border-color:var(--line2);box-shadow:0 0 0 1px rgba(58,216,255,.06), 0 20px 60px rgba(0,0,0,.5)}
+  .ai .card-h{background:linear-gradient(180deg,rgba(58,216,255,.05),transparent)}
+  .ai .card-h .t svg{color:var(--cyan)}
+  .gem{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;
+    color:var(--cyan);border:1px solid rgba(58,216,255,.25);background:rgba(58,216,255,.06);border-radius:5px;padding:3px 8px;text-transform:uppercase}
+
+  .ai-top{display:grid;grid-template-columns:auto 1fr;gap:22px;padding:20px 18px;border-bottom:1px solid var(--line)}
+  .gauge{position:relative;width:148px;height:148px}
+  .gauge .ring{transform:rotate(-90deg)}
+  .gauge .center{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+  .gauge .score{font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--green)}
+  .gauge .scoremax{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim)}
+  .gauge .lbl{margin-top:4px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--green);text-transform:uppercase}
+
+  .kpis{display:flex;flex-direction:column;justify-content:center;gap:12px}
+  .kpi{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:8px;padding:11px 14px;background:var(--bg)}
+  .kpi .k{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+  .kpi .v{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .kpi .v.g{color:var(--green)}
+  .kpi .v.a{color:var(--amber)}
+  .bar{height:5px;border-radius:3px;background:var(--line2);margin-top:8px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:3px}
+
+  /* BIG number */
+  .payoff{padding:22px 18px;border-bottom:1px solid var(--line);
+    background:radial-gradient(600px 200px at 20% 0%, rgba(28,247,161,.08), transparent 70%)}
+  .payoff .cap{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--green);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .payoff .hero{font-family:'JetBrains Mono',monospace;font-weight:800;letter-spacing:-.03em;line-height:.92;
+    font-size:clamp(48px,7vw,84px);background:linear-gradient(180deg,#eafff6,var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .payoff .hero small{font-size:.34em;color:var(--green);-webkit-text-fill-color:var(--green);font-weight:700;margin-left:8px}
+  .ledger{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .led{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);
+    border:1px solid var(--line);border-radius:6px;padding:6px 10px;background:var(--bg)}
+  .led b{color:var(--txt)}
+  .led .sep{color:var(--dimmer)}
+
+  .rationale{padding:18px;border-bottom:1px solid var(--line)}
+  .rationale .q{font-size:13.5px;line-height:1.6;color:#c2d2dd}
+  .rationale .q b{color:var(--green);font-weight:700}
+  .factors{display:flex;flex-wrap:wrap;gap:9px;padding:0 18px 18px}
+  .factor{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;
+    border:1px solid var(--line2);border-radius:7px;padding:7px 11px;background:linear-gradient(180deg,var(--panel2),var(--bg));color:var(--txt)}
+  .factor .ic{color:var(--green)}
+  .ai-foot{padding:18px;display:flex;align-items:center;gap:14px}
+  .ai-foot .note{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);flex:1;line-height:1.5}
+  .ai-foot .btn{width:auto;flex:0 0 auto;padding:14px 26px}
+
+  @media(max-width:1080px){
+    .grid{grid-template-columns:1fr}
+    .pool{display:none}
+  }
+  @media(max-width:560px){
+    .topbar{flex-wrap:wrap;height:auto;padding:10px}
+    .ai-top{grid-template-columns:1fr}
+    .wallet .meta{display:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <span class="logo"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 11 L7 2 L12 11" stroke="#1cf7a1" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M4.3 8 L9.7 8" stroke="#3ad8ff" stroke-width="1.4"/></svg></span>
+      Anticip<b>o</b>
+    </div>
+    <span class="live"><span class="dot"></span>ARB · LIVE</span>
+    <div class="pool">
+      <div class="stat"><span class="k">Pool TVL</span><span class="v num">$248,500</span></div>
+      <div class="stat"><span class="k">Available</span><span class="v cy num">$112,300</span></div>
+      <div class="stat"><span class="k">Yield APY</span><span class="v up num">9.2%</span></div>
+      <div class="stat"><span class="k">Active</span><span class="v num">14</span></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="wallet">
+      <div class="meta">
+        <span class="em">maria@tiendaroja.mx</span>
+        <span class="ad">0x70…79C8</span>
+      </div>
+      <div class="ava">M</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="crumbs">DESK / <b>FINANCE INVOICE</b> / SESSION #4271 <span style="color:var(--green)">●</span> connected</div>
+  <div class="grid">
+
+    <!-- LEFT: FORM -->
+    <section class="card">
+      <div class="card-h">
+        <div class="t"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Finance an invoice</div>
+        <span class="tag-sm">Draft</span>
+      </div>
+      <div class="body">
+        <div class="field">
+          <div class="lab"><span>Buyer (payer) wallet</span><span style="color:var(--green)">resolved ✓</span></div>
+          <div class="inp focus">
+            <div class="row">
+              <span class="addr">0x3C44…93BC</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--dim)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+            <div class="resolved"><span class="chk">✓</span>Resolves to <b>Soriana S.A. de C.V.</b></div>
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <div class="lab">Invoice face amount</div>
+            <div class="inp">
+              <div class="amt"><span class="big">100.00</span><span class="cur">USDC</span></div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="lab">Due date</div>
+            <div class="inp">
+              <div class="row">
+                <span class="num" style="font-size:16px;font-weight:600">Jul 15, 2026</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--dim)" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+              </div>
+              <div class="resolved" style="margin-top:6px">≈ 45 days out</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="lab">Invoice document</div>
+          <div class="filechip">
+            <span class="ic">PDF</span>
+            <div>
+              <div class="fn">factura-0427.pdf</div>
+              <div class="sub">hashed on submit · keccak256</div>
+            </div>
+            <span class="x">attached</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          Get AI quote
+        </button>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);text-align:center;margin-top:11px;letter-spacing:.04em">Gas-less · settles on Arbitrum · no seed phrase</p>
+      </div>
+    </section>
+
+    <!-- RIGHT: AI CARD -->
+    <section class="card ai">
+      <div class="card-h">
+        <div class="t"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l1.6 4.8L18 8l-4.4 1.2L12 14l-1.6-4.8L6 8l4.4-1.2z"/><circle cx="18" cy="17" r="2"/><circle cx="6" cy="17" r="1.4"/></svg>AI Underwriting</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="gem"><span class="dot" style="background:var(--cyan);box-shadow:0 0 8px var(--cyan)"></span>powered by Gemini</span>
+          <span class="tag-sm" style="color:var(--green);border-color:var(--line2)">QUOTE READY</span>
+        </div>
+      </div>
+
+      <div class="ai-top">
+        <div class="gauge">
+          <svg class="ring" width="148" height="148" viewBox="0 0 148 148">
+            <circle cx="74" cy="74" r="62" stroke="#16222c" stroke-width="11" fill="none"/>
+            <circle cx="74" cy="74" r="62" stroke="url(#g6)" stroke-width="11" fill="none" stroke-linecap="round"
+              stroke-dasharray="389.5" stroke-dashoffset="311.6"/>
+            <defs><linearGradient id="g6" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#1cf7a1"/><stop offset="1" stop-color="#3ad8ff"/>
+            </linearGradient></defs>
+          </svg>
+          <div class="center">
+            <div class="score">20<span class="scoremax">/100</span></div>
+            <div class="lbl">Low risk</div>
+          </div>
+        </div>
+        <div class="kpis">
+          <div class="kpi">
+            <div><div class="k">Advance ratio</div><div class="bar" style="width:120px"><i style="width:80%;background:linear-gradient(90deg,#1cf7a1,#3ad8ff)"></i></div></div>
+            <div class="v g">80%</div>
+          </div>
+          <div class="kpi">
+            <div><div class="k">Underwriting fee</div><div class="bar" style="width:120px"><i style="width:18%;background:linear-gradient(90deg,#ffc24b,#ff5d6c)"></i></div></div>
+            <div class="v a">2.0%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="payoff">
+        <div class="cap"><span class="dot"></span>You receive now</div>
+        <div class="hero">80.00<small>USDC</small></div>
+        <div class="ledger">
+          <span class="led">RECEIVE NOW <b style="color:var(--green)">80.00</b></span>
+          <span class="led">FEE <b style="color:var(--amber)">2.00</b></span>
+          <span class="led">BUYER REPAYS <b>100.00</b> @ due</span>
+        </div>
+      </div>
+
+      <div class="rationale">
+        <p class="q"><b>“</b> Soriana has paid <b>6 of 6</b> prior invoices on time, averaging <b>4 days early</b>. A strong, consistent payment record supports a high advance at a low fee. <b>”</b></p>
+      </div>
+
+      <div class="factors">
+        <span class="factor"><span class="ic">✓</span>6/6 on-time</span>
+        <span class="factor"><span class="ic">⏱</span>Avg 4 days early</span>
+        <span class="factor"><span class="ic">⊘</span>0 defaults</span>
+        <span class="factor"><span class="ic">◈</span>$420k paid on-chain</span>
+      </div>
+
+      <div class="ai-foot">
+        <div class="note">Locks advance ratio &amp; fee for 5 min.<br>Tokenizes receivable → pool releases USDC instantly.</div>
+        <button class="btn btn-primary">
+          Accept &amp; get 80 USDC
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+        </button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="variant-tag">variant 06 — dark-pro-trading</div>
+</body>
+</html>

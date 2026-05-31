@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Anticipo — Design Lab (20 variants)</title>
+<style>
+  :root { --bg:#0b0d12; --panel:#14171f; --ink:#e7eaf0; --mut:#9aa3b2; --line:#262b36; --accent:#5b8cff; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif; }
+  header { padding:28px 32px 16px; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(11,13,18,.86); backdrop-filter:blur(10px); z-index:5; }
+  header h1 { margin:0; font-size:22px; letter-spacing:-.02em; }
+  header p { margin:6px 0 0; color:var(--mut); font-size:13px; }
+  .controls { margin-top:14px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .controls label { font-size:12px; color:var(--mut); }
+  .controls input[type=range] { accent-color:var(--accent); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(420px,1fr)); gap:22px; padding:26px 32px 80px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+  .card .bar { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--line); }
+  .card .bar .name { font-size:13px; font-weight:600; }
+  .card .bar .num { font-size:11px; color:var(--mut); font-variant-numeric:tabular-nums; }
+  .card .bar a { font-size:11px; color:var(--accent); text-decoration:none; border:1px solid var(--line); padding:4px 9px; border-radius:999px; }
+  .card .bar a:hover { border-color:var(--accent); }
+  .frame-wrap { position:relative; width:100%; height:430px; background:#fff; overflow:hidden; }
+  .frame-wrap iframe { position:absolute; top:0; left:0; width:1280px; height:1230px; border:0; transform-origin:top left; }
+  .desc { padding:10px 14px; font-size:12px; color:var(--mut); line-height:1.5; border-top:1px solid var(--line); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Anticipo — Design Lab</h1>
+  <p>20 distinct directions for the SMB hero screen (same content, different look). Pick a winner — and call out any pieces to graft from runners-up. Click a tile's <b>open ↗</b> to view it full-size.</p>
+  <div class="controls">
+    <label>Thumbnail zoom</label>
+    <input id="zoom" type="range" min="0.20" max="0.55" step="0.01" value="0.33" />
+    <span id="zoomval" style="font-size:12px;color:var(--mut)">0.33×</span>
+  </div>
+</header>
+<div class="grid" id="grid"></div>
+<script>
+  const variants = [
+    [1,"fintech-clean","Airy Mercury/Stripe feel — one confident blue accent, soft elevation, gradient-ring score."],
+    [2,"swiss-grid","International typographic style — strict grid, red/black/paper, hairline rules, tabular numerals."],
+    [3,"minimal-luxe","Premium warm off-white — Fraunces serif headlines, single gold/bronze accent, expensive feel."],
+    [4,"high-contrast-accessible","WCAG-AAA — big type, 4px borders, hard shadows, amber focus rings, zero ambiguity."],
+    [5,"soft-pastel-card","Friendly for non-crypto SMBs — lavender/mint pastels, rounded cards, emoji, 'Hola Maria 👋'."],
+    [6,"dark-pro-trading","Bloomberg desk — near-black, neon-green/cyan, mono tabular figures, dense stats."],
+    [7,"terminal-mono","Full monospace amber-CRT — scanlines, ASCII bar gauge, shell-prompt framing."],
+    [8,"data-viz-forward","Dashboard energy — big radial gauge, KPI tiles, sparklines, buyer-history chart."],
+    [9,"glassmorphic","Frosted blur panels over a vivid gradient mesh — Fraunces display, layered depth."],
+    [10,"neo-brutalist","Thick black borders, hard offset shadows, loud primaries, chunky Archivo Black."],
+    [11,"warm-LATAM","Terracotta/sun-gold/agave — papel-picado motifs, festive yet trustworthy."],
+    [12,"editorial-serif","Newspaper masthead — Playfair/Spectral, columned rules, drop-cap, ink-on-paper."],
+    [13,"magazine-bold","Black + electric-lime, asymmetric, 118px oversized 80.00, fashion-mag punch."],
+    [14,"playful-rounded","Baloo bubbly multi-gradients, wobbling blob logo, emoji cues, friendly-credible."],
+    [15,"dashboard-dense","Dark ops control panel — left nav, breadcrumb, tabular grids, power-user density."],
+    [16,"web3-gradient","Dark holographic mesh, conic gradient-border card, glowing ring, DeFi energy."],
+    [17,"neobank-mobile-first","Light app shell, centered card stack, big rounded buttons, Nubank/Revolut vibe."],
+    [18,"premium-fintech-dark","Deep navy/charcoal, single emerald accent, Fraunces serif, enterprise polish."],
+    [19,"retro-future","Synthwave grid-horizon + scanlines, chrome/teal/magenta, restrained for credibility."],
+    [20,"organic-natural","Sage/clay/cream, soft blob shapes, Newsreader italic, calm humane finance."],
+  ];
+  const grid = document.getElementById('grid');
+  const pad = n => String(n).padStart(2,'0');
+  variants.forEach(([n,name,desc])=>{
+    const file = `variant-${pad(n)}.html`;
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.innerHTML = `
+      <div class="bar">
+        <span class="name">${name}</span>
+        <span style="display:flex;gap:10px;align-items:center">
+          <span class="num">variant ${pad(n)}</span>
+          <a href="${file}" target="_blank" rel="noopener">open ↗</a>
+        </span>
+      </div>
+      <div class="frame-wrap">
+        <iframe data-src="${file}" loading="lazy" scrolling="no"></iframe>
+      </div>
+      <div class="desc">${desc}</div>`;
+    grid.appendChild(el);
+  });
+  const zoom = document.getElementById('zoom');
+  const zoomval = document.getElementById('zoomval');
+  function applyZoom(){
+    const s = parseFloat(zoom.value);
+    zoomval.textContent = s.toFixed(2)+'×';
+    document.querySelectorAll('.frame-wrap').forEach(w=>{
+      const ifr = w.querySelector('iframe');
+      ifr.style.transform = `scale(${s})`;
+      w.style.height = (1230*s)+'px';
+    });
+  }
+  // lazy-load iframes when near viewport
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ const ifr=e.target; if(!ifr.src){ ifr.src=ifr.dataset.src; } io.unobserve(ifr);} });
+  }, {rootMargin:'600px'});
+  document.querySelectorAll('iframe').forEach(i=>io.observe(i));
+  zoom.addEventListener('input', applyZoom);
+  applyZoom();
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Anticipo — Finance an invoice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#000000;
+    --blue:#0b3ea8;
+    --blue-d:#082c78;
+    --blue-soft:#e7eefb;
+    --green:#0a6b2e;
+    --green-soft:#dcf3e3;
+    --amber:#7a4d00;
+    --line:#000000;
+    --focus:#ffbf00;
+    --sans:'Atkinson Hyperlegible',system-ui,sans-serif;
+    --mono:'Space Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.5;font-size:17px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 28px 70px}
+
+  a,button{font-family:inherit}
+  *:focus-visible{outline:4px solid var(--focus);outline-offset:3px;border-radius:2px}
+
+  /* skip link */
+  .skip{position:absolute;left:-9999px;top:8px;background:var(--ink);color:#fff;padding:10px 16px;font-weight:700;border-radius:6px;z-index:100}
+  .skip:focus{left:16px}
+
+  /* HEADER */
+  header{display:flex;align-items:center;gap:24px;padding:20px 0;border-bottom:4px solid var(--ink);flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:26px;letter-spacing:-.02em}
+  .logo{width:42px;height:42px;background:var(--blue);border:3px solid var(--ink);border-radius:8px;display:grid;place-items:center}
+  .logo svg{width:24px;height:24px}
+
+  .pool{display:flex;gap:0;border:3px solid var(--ink);border-radius:10px;overflow:hidden}
+  .pstat{padding:8px 18px;border-left:3px solid var(--ink)}
+  .pstat:first-child{border-left:0}
+  .pstat .k{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+  .pstat .v{font-family:var(--mono);font-size:18px;font-weight:700}
+  .pstat.hl{background:var(--green-soft)}
+  .pstat.hl .v{color:var(--green)}
+
+  .spacer{flex:1}
+  .wallet{display:flex;align-items:center;gap:11px;border:3px solid var(--ink);background:#fff;border-radius:10px;padding:8px 14px 8px 8px;cursor:pointer;font-weight:700}
+  .wallet:hover{background:var(--blue-soft)}
+  .av{width:40px;height:40px;border-radius:8px;border:3px solid var(--ink);flex:none;background:var(--blue);display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px}
+  .wallet .em{font-size:14px;line-height:1.1}
+  .wallet .ad{font-family:var(--mono);font-size:13px;font-weight:400}
+  .wallet .st{display:inline-flex;align-items:center;gap:6px;background:var(--green-soft);color:var(--green);border:2px solid var(--green);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;text-transform:uppercase;margin-left:6px}
+  .wallet .st .d{width:8px;height:8px;border-radius:50%;background:var(--green)}
+
+  /* HERO */
+  .hero{padding:34px 0 28px}
+  .hero h1{font-size:46px;font-weight:700;letter-spacing:-.025em;line-height:1.05}
+  .hero p{font-size:19px;margin-top:12px;max-width:640px}
+
+  /* GRID */
+  .grid{display:grid;grid-template-columns:1fr 1.15fr;gap:24px;align-items:start}
+
+  .card{border:4px solid var(--ink);border-radius:14px;background:#fff;box-shadow:8px 8px 0 var(--ink)}
+  .card .head{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:4px solid var(--ink);background:var(--ink);color:#fff}
+  .card .head h2{font-size:20px;font-weight:700}
+  .card .head .ico{width:34px;height:34px;border:3px solid #fff;border-radius:8px;display:grid;place-items:center}
+  .card .body{padding:24px}
+
+  /* FORM */
+  .field{margin-bottom:22px}
+  .field>label{display:block;font-size:15px;font-weight:700;margin-bottom:8px}
+  .ctrl{border:3px solid var(--ink);border-radius:10px;padding:14px 16px;background:#fff;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .ctrl .main{font-family:var(--mono);font-size:20px;font-weight:700}
+  .ctrl .main.txt{font-family:var(--sans)}
+  .ctrl .tag{font-size:14px;font-weight:700;color:var(--blue)}
+  .resolve{display:flex;align-items:center;gap:10px;border:3px solid var(--green);background:var(--green-soft);border-radius:10px;padding:12px 16px;margin-top:10px;font-weight:700;color:var(--green)}
+  .resolve svg{width:22px;height:22px;flex:none}
+  .resolve .biz{color:var(--ink);font-size:17px}
+  .help{font-size:14px;margin-top:6px;font-weight:400}
+
+  .filechip{display:flex;align-items:center;gap:12px;border:3px solid var(--ink);border-radius:10px;padding:12px 16px;background:var(--blue-soft);font-weight:700}
+  .filechip svg{width:22px;height:22px;flex:none;color:var(--blue)}
+  .filechip .h{margin-left:auto;font-size:13px;font-weight:700;color:var(--blue);text-transform:uppercase}
+
+  .btn{width:100%;border:4px solid var(--ink);cursor:pointer;font-weight:700;font-size:19px;border-radius:12px;padding:18px;display:flex;align-items:center;justify-content:center;gap:12px;transition:transform .1s, box-shadow .1s}
+  .btn svg{width:24px;height:24px}
+  .btn-q{background:var(--blue);color:#fff;box-shadow:6px 6px 0 var(--ink)}
+  .btn-q:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+  .btn-q:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+
+  /* AI CARD */
+  .ai .head{background:var(--blue)}
+  .ai-tag{margin-left:auto;display:inline-flex;align-items:center;gap:8px;border:3px solid #fff;border-radius:8px;padding:5px 11px;font-size:13px;font-weight:700;text-transform:uppercase}
+  .ai-tag .d{width:9px;height:9px;border-radius:50%;background:#fff;animation:bk 1.1s steps(1) infinite}
+  @keyframes bk{50%{opacity:.2}}
+
+  .scorebox{border:3px solid var(--ink);border-radius:12px;overflow:hidden;margin-bottom:22px}
+  .scorebox .top{display:flex;align-items:center;gap:20px;padding:20px 22px;background:var(--green-soft)}
+  .gauge{width:104px;height:104px;flex:none;position:relative}
+  .gauge .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gauge .n{font-family:var(--mono);font-size:34px;font-weight:700;line-height:.9}
+  .gauge .d{font-size:13px;font-weight:700}
+  .si .badge{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;border:3px solid var(--ink);border-radius:8px;padding:6px 14px;font-size:17px;font-weight:700}
+  .si .badge svg{width:20px;height:20px}
+  .si p{font-size:15px;font-weight:700;margin-top:8px;max-width:260px}
+  .scorebox .barwrap{padding:16px 22px;border-top:3px solid var(--ink)}
+  .barlab{display:flex;justify-content:space-between;font-size:13px;font-weight:700;text-transform:uppercase;margin-bottom:7px}
+  .bar{height:22px;border:3px solid var(--ink);border-radius:6px;overflow:hidden;position:relative;background:repeating-linear-gradient(45deg,#fff 0 6px,#f0f0f0 6px 12px)}
+  .bar .fill{position:absolute;left:0;top:0;bottom:0;width:20%;background:var(--green);border-right:3px solid var(--ink)}
+
+  .stats2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+  .mini{border:3px solid var(--ink);border-radius:12px;padding:16px 18px}
+  .mini .k{font-size:14px;font-weight:700;text-transform:uppercase}
+  .mini .v{font-family:var(--mono);font-size:36px;font-weight:700;margin-top:2px}
+  .mini.b{background:var(--blue-soft)}
+  .mini.b .v{color:var(--blue)}
+
+  .payoff{border:4px solid var(--ink);border-radius:14px;background:var(--ink);color:#fff;padding:26px;margin-bottom:22px;box-shadow:8px 8px 0 var(--blue)}
+  .payoff .l{font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .payoff .big{font-family:var(--mono);font-size:60px;font-weight:700;line-height:.95;margin-top:6px}
+  .payoff .big .u{font-family:var(--sans);font-size:24px;margin-left:10px}
+  .payoff .brk{font-size:15px;margin-top:16px;line-height:1.7;border-top:3px solid #fff;padding-top:14px}
+  .payoff .brk b{color:#ffe27a}
+
+  .rationale{border:3px solid var(--ink);border-radius:12px;padding:18px 20px;background:#fff;font-size:17px;line-height:1.6;margin-bottom:20px}
+  .rationale b{font-weight:700;background:#ffe27a;padding:0 3px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+  .chip{display:inline-flex;align-items:center;gap:9px;border:3px solid var(--ink);border-radius:10px;padding:10px 16px;font-size:15px;font-weight:700;background:#fff}
+  .chip svg{width:18px;height:18px;color:var(--green);flex:none}
+
+  .btn-accept{background:var(--green);color:#fff;box-shadow:6px 6px 0 var(--ink);font-size:21px;padding:20px}
+  .btn-accept:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+  .btn-accept:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+
+  .vlabel{position:fixed;left:16px;bottom:14px;z-index:50;background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:7px 12px;border-radius:6px;border:2px solid #fff}
+
+  @media(max-width:980px){
+    .grid{grid-template-columns:1fr}
+    .pool{order:3;width:100%;flex-wrap:wrap}
+    .pstat{flex:1 1 40%;border-top:3px solid var(--ink)}
+    .pstat:nth-child(1),.pstat:nth-child(2){border-top:0}
+    .hero h1{font-size:36px}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 16px 56px}
+    .stats2{grid-template-columns:1fr}
+    .scorebox .top{flex-direction:column;align-items:flex-start}
+    .payoff .big{font-size:44px}
+  }
+</style>
+</head>
+<body>
+  <a href="#main" class="skip">Skip to main content</a>
+  <div class="vlabel">variant 04 — high-contrast-accessible</div>
+  <div class="wrap">
+
+    <header>
+      <div class="brand">
+        <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"/></svg></span>
+        Anticipo
+      </div>
+      <div class="pool" role="group" aria-label="Liquidity pool statistics">
+        <div class="pstat"><div class="k">Pool TVL</div><div class="v">$248,500</div></div>
+        <div class="pstat"><div class="k">Available</div><div class="v">$112,300</div></div>
+        <div class="pstat hl"><div class="k">Yield APY</div><div class="v">9.2%</div></div>
+        <div class="pstat"><div class="k">Active</div><div class="v">14</div></div>
+      </div>
+      <div class="spacer"></div>
+      <button class="wallet" aria-label="Connected account, maria at tiendaroja dot m x">
+        <span class="av" aria-hidden="true">M</span>
+        <span>
+          <span class="em">maria@tiendaroja.mx</span><br>
+          <span class="ad">0x70…79C8</span>
+        </span>
+        <span class="st"><span class="d"></span>Live</span>
+      </button>
+    </header>
+
+    <main id="main">
+      <div class="hero">
+        <h1>Finance an invoice</h1>
+        <p>Get USDC today for one unpaid invoice. The AI underwriter checks the buyer's on-chain payment history and gives you a clear, fair quote.</p>
+      </div>
+
+      <div class="grid">
+        <!-- LEFT -->
+        <section class="card" aria-labelledby="form-h">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span><h2 id="form-h">Finance an invoice</h2></div>
+          <div class="body">
+            <div class="field">
+              <label id="buyer-l">Buyer (payer) wallet</label>
+              <div class="ctrl" aria-labelledby="buyer-l"><span class="main">0x3C44…93BC</span></div>
+              <div class="resolve">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Resolves to <span class="biz">Soriana S.A. de C.V.</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label id="amt-l">Invoice face amount</label>
+              <div class="ctrl" aria-labelledby="amt-l"><span class="main">100.00</span><span class="tag">USDC</span></div>
+            </div>
+
+            <div class="field">
+              <label id="due-l">Due date</label>
+              <div class="ctrl" aria-labelledby="due-l"><span class="main txt">Jul 15, 2026</span><span class="tag">≈ 45 days</span></div>
+            </div>
+
+            <div class="field">
+              <label>Invoice document</label>
+              <div class="filechip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                factura-0427.pdf
+                <span class="h">Hashed on submit</span>
+              </div>
+            </div>
+
+            <button class="btn btn-q">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/></svg>
+              Get AI quote
+            </button>
+          </div>
+        </section>
+
+        <!-- RIGHT -->
+        <section class="card ai" aria-labelledby="ai-h">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3 3 3 0 0 1 1.5 5.6A3 3 0 0 1 15 18a3 3 0 0 1-6 0 3 3 0 0 1-1.5-6.4A3 3 0 0 1 9 6a3 3 0 0 1 3-3z"/></svg></span><h2 id="ai-h">AI Underwriting</h2><span class="ai-tag"><span class="d"></span>Gemini · Live</span></div>
+          <div class="body">
+
+            <div class="scorebox">
+              <div class="top">
+                <div class="gauge" role="img" aria-label="Risk score 20 out of 100, low risk">
+                  <svg width="104" height="104" viewBox="0 0 104 104">
+                    <circle cx="52" cy="52" r="42" fill="none" stroke="#fff" stroke-width="11"/>
+                    <circle cx="52" cy="52" r="42" fill="none" stroke="#000" stroke-width="13"/>
+                    <circle cx="52" cy="52" r="42" fill="none" stroke="#0a6b2e" stroke-width="11" stroke-linecap="butt"
+                            transform="rotate(-90 52 52)" stroke-dasharray="263.9" stroke-dashoffset="211.1"/>
+                  </svg>
+                  <div class="c"><span class="n">20</span><span class="d">/ 100</span></div>
+                </div>
+                <div class="si">
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Low risk</span>
+                  <p>Clean on-chain record, zero late payments.</p>
+                </div>
+              </div>
+              <div class="barwrap">
+                <div class="barlab"><span>Risk meter</span><span>20 / 100</span></div>
+                <div class="bar" role="img" aria-label="Risk 20 percent, low"><div class="fill"></div></div>
+              </div>
+            </div>
+
+            <div class="stats2">
+              <div class="mini b"><div class="k">Advance ratio</div><div class="v">80%</div></div>
+              <div class="mini"><div class="k">Fee</div><div class="v">2.0%</div></div>
+            </div>
+
+            <div class="payoff">
+              <div class="l">You receive now</div>
+              <div class="big">80.00<span class="u">USDC</span></div>
+              <div class="brk">You receive now <b>80.00 USDC</b> · Fee <b>2.00 USDC</b> · Buyer repays <b>100.00 USDC</b> at due date</div>
+            </div>
+
+            <p class="rationale"><b>Soriana has paid 6 of 6 prior invoices on time,</b> averaging 4 days early. A strong, consistent payment record supports a high advance at a low fee.</p>
+
+            <div class="chips">
+              <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>6/6 on-time</span>
+              <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Avg 4 days early</span>
+              <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>0 defaults</span>
+              <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>$420k paid on-chain</span>
+            </div>
+
+            <button class="btn btn-accept">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+              Accept &amp; get 80 USDC
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

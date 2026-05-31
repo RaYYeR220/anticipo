@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Anticipo — Finance an invoice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#eef1f7;
+    --bg2:#e3e8f2;
+    --ink:#1a1d29;
+    --muted:#6b7280;
+    --faint:#9aa1ad;
+    --line:#e8ebf2;
+    --card:#ffffff;
+    --brand:#7b3ff2;       /* nubank-ish purple */
+    --brand-d:#5a23c8;
+    --mint:#16c79a;
+    --sky:#eaf0ff;
+    --soft:#f5f3ff;
+    --radius:26px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(60% 50% at 85% -5%, #efe7ff, transparent 60%),
+      radial-gradient(55% 45% at 5% 105%, #e2f7f0, transparent 60%),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+    min-height:100vh;-webkit-font-smoothing:antialiased;
+    padding:22px 18px 70px;
+  }
+  /* App shell: a calm centered column on a soft backdrop */
+  .shell{
+    max-width:1180px;margin:0 auto;
+    background:var(--card);
+    border-radius:34px;
+    box-shadow:0 40px 90px -50px rgba(60,40,120,.45), 0 2px 0 rgba(255,255,255,.8) inset;
+    overflow:hidden;
+    border:1px solid #fff;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+    padding:18px 26px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#fbfaff,#fff);
+  }
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:21px;letter-spacing:-.02em;color:var(--brand)}
+  .logo{width:36px;height:36px;border-radius:13px;background:linear-gradient(150deg,var(--brand),#a06bff);display:grid;place-items:center;box-shadow:0 8px 18px -8px var(--brand)}
+  .logo svg{width:19px;height:19px}
+  .pool{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+  .stat{padding:7px 14px;border-radius:14px;background:var(--soft);min-width:84px}
+  .stat .k{font-size:10.5px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.05em}
+  .stat .v{font-weight:800;font-size:15px;margin-top:1px}
+  .stat .v.up{color:var(--mint)}
+  .wallet{display:flex;align-items:center;gap:10px;padding:6px 8px 6px 14px;border-radius:999px;background:var(--soft);border:1px solid #ece6ff;cursor:pointer;transition:box-shadow .2s,transform .2s}
+  .wallet:hover{box-shadow:0 10px 22px -12px var(--brand);transform:translateY(-1px)}
+  .wallet .em{font-size:12.5px;font-weight:700;line-height:1.1}
+  .wallet .ad{font-family:'DM Mono',monospace;font-size:11px;color:var(--brand)}
+  .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,#ff8ba7,#ffc3a0);display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff}
+
+  /* ---------- BODY: app-like centered column ---------- */
+  .body{padding:34px 26px 44px;background:linear-gradient(180deg,#fafaff,#fff)}
+  .lead{text-align:center;max-width:560px;margin:0 auto 26px}
+  .lead .pre{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--brand);background:var(--soft);padding:6px 13px;border-radius:999px;margin-bottom:12px}
+  .lead h1{font-size:30px;font-weight:800;letter-spacing:-.03em}
+  .lead p{color:var(--muted);margin-top:7px;font-size:15px}
+
+  .stack{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+  .ccard{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 18px 40px -34px rgba(60,40,120,.5)}
+  .ctitle{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;margin-bottom:14px}
+  .ctitle .ic{width:28px;height:28px;border-radius:9px;background:var(--soft);display:grid;place-items:center;color:var(--brand)}
+
+  .field+.field{margin-top:13px}
+  .lab{font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+  .ctrl{border:1.5px solid var(--line);border-radius:16px;padding:13px 15px;display:flex;align-items:center;gap:11px;background:#fcfcff;transition:border-color .2s,box-shadow .2s}
+  .ctrl:hover{border-color:#d9ccff;box-shadow:0 0 0 4px #f1ebff}
+  .ctrl .mono{font-family:'DM Mono',monospace;font-size:14px;font-weight:500}
+  .ctrl .name{font-size:13px;color:var(--muted)}
+  .ctrl .big{font-weight:800;font-size:18px}
+  .ctrl .unit{margin-left:auto;font-size:12.5px;color:var(--faint);font-weight:700}
+  .badge{margin-left:auto;font-size:11px;font-weight:700;color:var(--mint);background:#e2f7f0;padding:3px 9px;border-radius:8px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .filechip{display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:14px;background:var(--sky);border:1px solid #dde6ff;font-size:13px;font-weight:700;color:#3a4d8f}
+  .filechip .x{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:#7d8bbd}
+
+  .btn{width:100%;border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:16px;color:#fff;
+    padding:16px;border-radius:18px;background:linear-gradient(140deg,var(--brand),var(--brand-d));
+    box-shadow:0 16px 30px -14px var(--brand);transition:transform .16s,box-shadow .16s,filter .16s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 22px 38px -14px var(--brand);filter:brightness(1.05)}
+  .btn:active{transform:translateY(0)}
+  .btn.mint{background:linear-gradient(140deg,#1ed29f,#0fa57a);box-shadow:0 16px 30px -14px #16c79a}
+
+  /* ---------- AI CARD (centerpiece) ---------- */
+  .ai{border:1.5px solid #ece6ff;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fdfcff,#fff)}
+  .ai .glow{position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(123,63,242,.18),transparent);pointer-events:none}
+  .aihead{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .tag{font-size:11px;font-weight:700;color:var(--brand);background:var(--soft);padding:5px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
+  .live{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 0 rgba(22,199,154,.5);animation:p 1.8s infinite}
+  @keyframes p{70%{box-shadow:0 0 0 7px rgba(22,199,154,0)}}
+
+  .scorewrap{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;margin:18px 0;
+    padding:16px;border-radius:20px;background:#faf8ff;border:1px solid #efeaff}
+  .ring{position:relative;width:104px;height:104px}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .n{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+  .ring .n b{font-size:30px;font-weight:800}
+  .ring .n small{font-size:11px;color:var(--faint)}
+  .risk{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:15px;color:#0fa57a;background:#e2f7f0;padding:7px 14px;border-radius:999px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .ts{padding:11px 13px;border-radius:14px;background:#fff;border:1px solid var(--line)}
+  .ts .k{font-size:11px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.04em}
+  .ts .v{font-size:22px;font-weight:800;color:var(--brand);margin-top:2px}
+
+  .payoff{margin:16px 0;text-align:center;padding:26px 18px;border-radius:22px;
+    background:linear-gradient(150deg,#7b3ff2,#5a23c8);color:#fff;box-shadow:0 22px 44px -22px var(--brand)}
+  .payoff .lab{font-size:12.5px;font-weight:700;opacity:.85;text-transform:uppercase;letter-spacing:.08em}
+  .payoff .amt{font-size:54px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-top:5px}
+  .payoff .amt span{font-size:22px;opacity:.85}
+  .payoff .bd{margin-top:12px;font-size:12.5px;opacity:.9;line-height:1.6}
+  .payoff .bd b{font-weight:800}
+
+  .rationale{font-size:14px;line-height:1.6;color:#3c3a52;background:#faf8ff;border-radius:16px;padding:14px 16px;border:1px solid #efeaff}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:12px;background:#f3f5fb;border:1px solid var(--line);color:#43485a;display:flex;align-items:center;gap:6px}
+  .chip i{width:6px;height:6px;border-radius:50%;background:var(--mint)}
+
+  .vlabel{position:fixed;left:14px;bottom:12px;z-index:9;font-family:'DM Mono',monospace;font-size:11px;color:#9aa1ad;background:#fff;border:1px solid var(--line);padding:5px 11px;border-radius:999px;box-shadow:0 6px 16px -8px rgba(0,0,0,.2)}
+
+  @media(max-width:560px){.pool{order:3;width:100%;margin-left:0}.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="brand">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M5 14l4-9 4 9M6.6 11h4.8M14 19l3.5-8 3.5 8M15.4 16.2h4.2" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      Anticipo
+    </div>
+    <div class="pool">
+      <div class="stat"><div class="k">Pool TVL</div><div class="v">$248,500</div></div>
+      <div class="stat"><div class="k">Available</div><div class="v">$112,300</div></div>
+      <div class="stat"><div class="k">APY</div><div class="v up">9.2%</div></div>
+      <div class="stat"><div class="k">Active</div><div class="v">14</div></div>
+    </div>
+    <div class="wallet">
+      <div><div class="em">maria@tiendaroja.mx</div><div class="ad">0x70…79C8</div></div>
+      <div class="av">M</div>
+    </div>
+  </header>
+
+  <div class="body">
+    <div class="lead">
+      <span class="pre">⚡ Instant USDC for your invoice</span>
+      <h1>Finance an invoice</h1>
+      <p>Get cash today instead of waiting 30–60 days. Our AI prices it in seconds.</p>
+    </div>
+
+    <div class="stack">
+      <!-- FORM CARD -->
+      <div class="ccard">
+        <div class="ctitle"><span class="ic">📄</span> Your invoice</div>
+
+        <div class="field">
+          <div class="lab"><span>Buyer (payer) wallet</span></div>
+          <div class="ctrl">
+            <span class="mono">0x3C44…93BC</span>
+            <span class="name">Soriana S.A. de C.V.</span>
+            <span class="badge">✓ resolved</span>
+          </div>
+        </div>
+
+        <div class="field row2">
+          <div>
+            <div class="lab">Face amount</div>
+            <div class="ctrl"><span class="big">100.00</span><span class="unit">USDC</span></div>
+          </div>
+          <div>
+            <div class="lab">Due date</div>
+            <div class="ctrl"><span class="big">Jul 15</span><span class="unit">~45d</span></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="lab"><span>Document</span><span>hashed on submit</span></div>
+          <div class="filechip">📎 factura-0427.pdf <span class="x">sha256 ✓</span></div>
+        </div>
+
+        <button class="btn" style="margin-top:18px">Get AI quote</button>
+      </div>
+
+      <!-- AI CARD -->
+      <div class="ccard ai">
+        <div class="glow"></div>
+        <div class="aihead">
+          <div class="ctitle" style="margin:0"><span class="ic">✦</span> AI Underwriting</div>
+          <div style="display:flex;gap:6px">
+            <span class="tag"><span class="live"></span>live</span>
+            <span class="tag">Gemini</span>
+          </div>
+        </div>
+
+        <div class="scorewrap">
+          <div class="ring">
+            <svg width="104" height="104" viewBox="0 0 104 104">
+              <defs><linearGradient id="g17" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1ed29f"/><stop offset="1" stop-color="#16c79a"/></linearGradient></defs>
+              <circle cx="52" cy="52" r="44" stroke="#ecebf5" stroke-width="10" fill="none"/>
+              <circle cx="52" cy="52" r="44" stroke="url(#g17)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="276" stroke-dashoffset="221"/>
+            </svg>
+            <div class="n"><b>20</b><small>/100</small></div>
+          </div>
+          <div>
+            <div class="risk">🛡 Low risk</div>
+            <div class="two">
+              <div class="ts"><div class="k">Advance</div><div class="v">80%</div></div>
+              <div class="ts"><div class="k">Fee</div><div class="v">2.0%</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="payoff">
+          <div class="lab">You receive now</div>
+          <div class="amt">80.00 <span>USDC</span></div>
+          <div class="bd">You receive now <b>80.00 USDC</b> · Fee <b>2.00 USDC</b> · Buyer repays <b>100.00 USDC</b> at due date</div>
+        </div>
+
+        <p class="rationale">Soriana has paid 6 of 6 prior invoices on time, averaging 4 days early. A strong, consistent payment record supports a high advance at a low fee.</p>
+
+        <div class="chips">
+          <span class="chip"><i></i>6/6 on-time</span>
+          <span class="chip"><i></i>Avg 4 days early</span>
+          <span class="chip"><i></i>0 defaults</span>
+          <span class="chip"><i></i>$420k paid on-chain</span>
+        </div>
+
+        <button class="btn mint" style="margin-top:18px">Accept &amp; get 80 USDC</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="vlabel">variant 17 — neobank-mobile-first</div>
+</body>
+</html>

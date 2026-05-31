@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Anticipo — Finance an invoice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Newsreader:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#f7f3ec;
+    --paper-2:#fdfbf6;
+    --ink:#1a1713;
+    --ink-2:#5a5147;
+    --ink-3:#8d8377;
+    --line:#e4ddd0;
+    --line-2:#eee8dd;
+    --gold:#9a7438;
+    --gold-2:#bd9450;
+    --gold-soft:#f1e6d2;
+    --green:#3a6b4a;
+    --green-soft:#e7efe6;
+    --serif:'Fraunces',Georgia,serif;
+    --sans:'Inter',system-ui,sans-serif;
+    --news:'Newsreader',Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--sans);background:var(--paper);color:var(--ink);
+    -webkit-font-smoothing:antialiased;line-height:1.55;font-size:15px;
+    background-image:
+      radial-gradient(800px 400px at 90% -5%, rgba(189,148,80,.07), transparent 60%),
+      radial-gradient(700px 500px at -10% 100%, rgba(58,107,74,.05), transparent 55%);
+  }
+  .wrap{max-width:1240px;margin:0 auto;padding:0 40px 80px}
+
+  /* HEADER */
+  header{display:flex;align-items:center;gap:34px;padding:30px 0 24px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:13px}
+  .crest{width:38px;height:38px;border:1.5px solid var(--gold);border-radius:50%;display:grid;place-items:center;position:relative}
+  .crest::after{content:"";position:absolute;inset:4px;border:1px solid var(--gold-2);border-radius:50%;opacity:.5}
+  .crest span{font-family:var(--serif);font-weight:600;color:var(--gold);font-size:18px;font-style:italic}
+  .brand .name{font-family:var(--serif);font-size:25px;font-weight:600;letter-spacing:-.015em}
+  .brand .name em{font-style:italic;color:var(--gold)}
+
+  .pool{display:flex;gap:0;margin-left:8px}
+  .pstat{padding:0 22px;border-left:1px solid var(--line);display:flex;flex-direction:column}
+  .pstat:first-child{border-left:0}
+  .pstat .k{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .pstat .v{font-family:var(--serif);font-size:21px;font-weight:500;letter-spacing:-.01em;margin-top:3px}
+  .pstat .v.g{color:var(--gold)}
+
+  .spacer{flex:1}
+  .wallet{display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:var(--paper-2);border-radius:999px;padding:7px 9px 7px 7px;cursor:pointer;transition:.2s}
+  .wallet:hover{border-color:var(--gold-2);box-shadow:0 8px 24px -12px rgba(154,116,56,.4)}
+  .av{width:34px;height:34px;border-radius:50%;flex:none;background:
+    radial-gradient(circle at 30% 30%, #d9b878, var(--gold) 70%);box-shadow:inset 0 0 0 2px var(--paper-2)}
+  .wallet .em{font-size:13px;font-weight:600;line-height:1.15;font-family:var(--news)}
+  .wallet .ad{font-size:11.5px;color:var(--ink-3);font-family:var(--sans);letter-spacing:.02em}
+  .wallet .dot{width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px}
+
+  /* HERO */
+  .hero{padding:44px 0 36px;max-width:780px}
+  .kicker{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:14px}
+  .hero h1{font-family:var(--serif);font-size:54px;font-weight:500;letter-spacing:-.025em;line-height:1.02}
+  .hero h1 em{font-style:italic;color:var(--gold)}
+  .hero p{font-family:var(--news);font-size:18px;color:var(--ink-2);margin-top:16px;max-width:600px;line-height:1.6}
+
+  /* GRID */
+  .grid{display:grid;grid-template-columns:minmax(0,0.92fr) minmax(0,1.18fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .panel{background:var(--paper-2);padding:40px 42px}
+
+  .sectlabel{display:flex;align-items:baseline;gap:12px;margin-bottom:30px}
+  .sectlabel .no{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--gold)}
+  .sectlabel h2{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.01em}
+  .sectlabel .rule{flex:1;height:1px;background:var(--line);align-self:center}
+
+  /* FORM */
+  .field{padding:18px 0;border-bottom:1px solid var(--line-2)}
+  .field:first-of-type{padding-top:0}
+  .field .lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:8px}
+  .field .val{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:-.01em}
+  .field .val .u{font-family:var(--sans);font-size:13px;color:var(--ink-3);font-weight:500;margin-left:5px}
+  .field .resolve{font-family:var(--news);font-style:italic;font-size:17px;color:var(--gold);margin-top:5px}
+  .field .meta{font-size:12.5px;color:var(--ink-3);margin-top:4px}
+
+  .filechip{display:inline-flex;align-items:center;gap:11px;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:11px 15px;margin-top:8px}
+  .filechip .ic{color:var(--gold)}
+  .filechip svg{width:16px;height:16px;display:block}
+  .filechip .nm{font-family:var(--news);font-size:14px}
+  .filechip .h{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);border-left:1px solid var(--line);padding-left:11px}
+
+  .btn{width:100%;border:0;cursor:pointer;font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:.02em;border-radius:10px;padding:17px;transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px}
+  .btn-q{background:var(--ink);color:var(--paper);margin-top:30px}
+  .btn-q:hover{background:#2e2820}
+  .btn-q .ar{transition:.2s}
+  .btn-q:hover .ar{transform:translateX(4px)}
+
+  /* AI PANEL */
+  .ai{background:linear-gradient(180deg,var(--paper-2),#fcf8f0)}
+  .ai-tag{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600;border:1px solid var(--gold-soft);background:var(--gold-soft);border-radius:999px;padding:5px 12px}
+  .ai-tag .pulse{width:6px;height:6px;border-radius:50%;background:var(--gold);position:relative}
+  .ai-tag .pulse::after{content:"";position:absolute;inset:-3px;border-radius:50%;background:var(--gold);opacity:.35;animation:pp 2s ease-out infinite}
+  @keyframes pp{to{transform:scale(2.4);opacity:0}}
+
+  .score-row{display:flex;align-items:center;gap:30px;padding-bottom:30px;border-bottom:1px solid var(--line-2)}
+  .gauge{width:130px;height:130px;flex:none;position:relative}
+  .gauge .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gauge .n{font-family:var(--serif);font-size:42px;font-weight:500;line-height:.9;letter-spacing:-.03em}
+  .gauge .d{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-top:3px}
+  .sm h3{font-family:var(--serif);font-size:25px;font-weight:500;color:var(--green);letter-spacing:-.01em}
+  .sm .badge{display:inline-flex;align-items:center;gap:7px;background:var(--green-soft);color:var(--green);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;letter-spacing:.04em;margin-bottom:8px}
+  .sm p{font-family:var(--news);font-size:15px;color:var(--ink-2);margin-top:8px;max-width:260px;line-height:1.5}
+
+  .twostat{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-2);border:1px solid var(--line-2);border-radius:6px;overflow:hidden;margin:28px 0}
+  .twostat .s{background:var(--paper-2);padding:18px 22px}
+  .twostat .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .twostat .v{font-family:var(--serif);font-size:40px;font-weight:500;letter-spacing:-.03em;margin-top:4px}
+  .twostat .v.g{color:var(--gold)}
+
+  .payoff{text-align:center;padding:34px 20px;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+  .payoff .l{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .payoff .big{font-family:var(--serif);font-size:82px;font-weight:500;letter-spacing:-.04em;line-height:.95;margin-top:10px;background:linear-gradient(180deg,var(--ink),#46392a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .payoff .big .u{font-family:var(--sans);font-size:24px;font-weight:600;-webkit-text-fill-color:var(--gold);margin-left:8px;letter-spacing:0}
+  .payoff .brk{font-family:var(--news);font-size:14px;color:var(--ink-2);margin-top:14px;line-height:1.7}
+  .payoff .brk b{color:var(--ink);font-weight:600;font-family:var(--sans);font-size:13px}
+
+  .rationale{font-family:var(--news);font-size:18px;line-height:1.65;color:var(--ink-2);margin:28px 0;font-style:italic;position:relative;padding-left:20px}
+  .rationale::before{content:"";position:absolute;left:0;top:5px;bottom:5px;width:2px;background:var(--gold)}
+  .rationale b{font-style:normal;color:var(--ink);font-weight:600}
+
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:30px}
+  .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:8px 15px;font-size:13px;font-weight:500;color:var(--ink-2);font-family:var(--news)}
+  .chip .d{width:5px;height:5px;border-radius:50%;background:var(--gold)}
+
+  .btn-accept{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:#fff;font-size:16px;padding:19px;box-shadow:0 14px 30px -12px rgba(154,116,56,.6)}
+  .btn-accept:hover{transform:translateY(-1px);box-shadow:0 20px 40px -14px rgba(154,116,56,.65)}
+
+  .vlabel{position:fixed;left:16px;bottom:14px;z-index:50;background:var(--ink);color:var(--paper);font-size:11px;font-weight:500;letter-spacing:.04em;padding:6px 12px;border-radius:6px;font-family:var(--sans)}
+
+  @media(max-width:980px){
+    .grid{grid-template-columns:1fr}
+    .pool{order:3;width:100%;margin-left:0;flex-wrap:wrap}
+    .pstat{flex:1 1 40%;padding:10px 0 10px 0;border-left:0;border-top:1px solid var(--line)}
+    .hero h1{font-size:42px}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 22px 60px}
+    .panel{padding:30px 24px}
+    .score-row{flex-direction:column;align-items:flex-start;gap:20px}
+    .twostat{grid-template-columns:1fr}
+    .payoff .big{font-size:60px}
+  }
+</style>
+</head>
+<body>
+  <div class="vlabel">variant 03 — minimal-luxe</div>
+  <div class="wrap">
+
+    <header>
+      <div class="brand">
+        <span class="crest"><span>A</span></span>
+        <span class="name"><em>An</em>ticipo</span>
+      </div>
+      <div class="pool">
+        <div class="pstat"><span class="k">Pool TVL</span><span class="v">$248,500</span></div>
+        <div class="pstat"><span class="k">Available</span><span class="v">$112,300</span></div>
+        <div class="pstat"><span class="k">Yield · APY</span><span class="v g">9.2%</span></div>
+        <div class="pstat"><span class="k">Active</span><span class="v">14</span></div>
+      </div>
+      <div class="spacer"></div>
+      <button class="wallet">
+        <span class="dot"></span>
+        <span class="av"></span>
+        <span>
+          <span class="em">maria@tiendaroja.mx</span><br>
+          <span class="ad">0x70…79C8</span>
+        </span>
+      </button>
+    </header>
+
+    <div class="hero">
+      <div class="kicker">Receivable Advance · USDC</div>
+      <h1>Finance an <em>invoice,</em><br>paid in full today.</h1>
+      <p>One unpaid receivable becomes liquidity now. Our underwriter studies the buyer's on-chain history and quotes your advance with the discretion of a private banker.</p>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="panel">
+        <div class="sectlabel"><span class="no">I.</span><h2>The Invoice</h2><span class="rule"></span></div>
+
+        <div class="field">
+          <div class="lab">Buyer — Payer Wallet</div>
+          <div class="val">0x3C44…93BC</div>
+          <div class="resolve">Soriana S.A. de C.V.</div>
+        </div>
+
+        <div class="field">
+          <div class="lab">Invoice Face Amount</div>
+          <div class="val">100.00<span class="u">USDC</span></div>
+        </div>
+
+        <div class="field">
+          <div class="lab">Due Date</div>
+          <div class="val">Jul 15, 2026</div>
+          <div class="meta">Approximately 45 days from today</div>
+        </div>
+
+        <div class="field" style="border-bottom:0">
+          <div class="lab">Invoice Document</div>
+          <div class="filechip">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+            <span class="nm">factura-0427.pdf</span>
+            <span class="h">Hashed on submit</span>
+          </div>
+        </div>
+
+        <button class="btn btn-q">Get AI quote <span class="ar">→</span></button>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="panel ai">
+        <div class="sectlabel">
+          <span class="no">II.</span><h2>AI Underwriting</h2>
+          <span class="ai-tag"><span class="pulse"></span>Powered by Gemini</span>
+        </div>
+
+        <div class="score-row">
+          <div class="gauge">
+            <svg width="130" height="130" viewBox="0 0 130 130">
+              <circle cx="65" cy="65" r="54" fill="none" stroke="#e9e1d3" stroke-width="9"/>
+              <circle cx="65" cy="65" r="54" fill="none" stroke="#3a6b4a" stroke-width="9" stroke-linecap="round"
+                      transform="rotate(-90 65 65)" stroke-dasharray="339.3" stroke-dashoffset="271.4"/>
+            </svg>
+            <div class="c"><span class="n">20</span><span class="d">/ 100</span></div>
+          </div>
+          <div class="sm">
+            <span class="badge">● Low risk</span>
+            <h3>A trusted payer.</h3>
+            <p>A clean, consistent repayment record with no late settlements on record.</p>
+          </div>
+        </div>
+
+        <div class="twostat">
+          <div class="s"><div class="k">Advance ratio</div><div class="v g">80%</div></div>
+          <div class="s"><div class="k">Fee</div><div class="v">2.0%</div></div>
+        </div>
+
+        <div class="payoff">
+          <div class="l">Advanced to you now</div>
+          <div class="big">80.00<span class="u">USDC</span></div>
+          <div class="brk">You receive now <b>80.00 USDC</b> · Fee <b>2.00 USDC</b> · Buyer repays <b>100.00 USDC</b> at due date</div>
+        </div>
+
+        <p class="rationale">
+          <b>Soriana has paid 6 of 6 prior invoices on time,</b> averaging 4 days early. A strong, consistent payment record supports a high advance at a low fee.
+        </p>
+
+        <div class="chips">
+          <span class="chip"><span class="d"></span>6 / 6 on-time</span>
+          <span class="chip"><span class="d"></span>Avg 4 days early</span>
+          <span class="chip"><span class="d"></span>0 defaults</span>
+          <span class="chip"><span class="d"></span>$420k paid on-chain</span>
+        </div>
+
+        <button class="btn btn-accept">Accept &amp; get 80 USDC</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

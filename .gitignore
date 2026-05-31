@@ -21,3 +21,7 @@ packages/contracts/broadcast/
 .DS_Store
 *.log
 .remember/
+
+# design-lab scratch
+/shots/
+/.playwright-mcp/

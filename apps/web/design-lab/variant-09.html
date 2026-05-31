@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anticipo — Glass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --txt:#f3f0ff;
+    --dim:rgba(243,240,255,.66);
+    --dimmer:rgba(243,240,255,.42);
+    --line:rgba(255,255,255,.16);
+    --line2:rgba(255,255,255,.28);
+    --glass:rgba(255,255,255,.08);
+    --glass2:rgba(255,255,255,.13);
+    --mint:#8affc1;
+    --aqua:#7fe6ff;
+    --gold:#ffd479;
+    --rose:#ff9ecb;
+    --violet:#c9a9ff;
+    --ink:#1a1040;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Manrope',sans-serif;
+    color:var(--txt);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    background:#1b1147;
+    position:relative;
+    overflow-x:hidden;
+  }
+  /* vivid gradient mesh backdrop */
+  body::before{
+    content:"";position:fixed;inset:-20%;z-index:-2;
+    background:
+      radial-gradient(50% 45% at 18% 22%, #ff6fae 0%, transparent 60%),
+      radial-gradient(46% 42% at 82% 14%, #6f7bff 0%, transparent 60%),
+      radial-gradient(52% 48% at 78% 84%, #1fd1b0 0%, transparent 62%),
+      radial-gradient(48% 46% at 14% 88%, #ffb14e 0%, transparent 60%),
+      linear-gradient(135deg,#2a1466,#150a3a);
+    filter:saturate(1.15);
+  }
+  /* grain */
+  body::after{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+  .num{font-variant-numeric:tabular-nums}
+  .serif{font-family:'Fraunces',serif}
+
+  .variant-tag{position:fixed;left:16px;bottom:16px;z-index:60;font-size:11px;color:var(--txt);
+    background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line);padding:6px 11px;border-radius:999px;letter-spacing:.04em}
+
+  header{position:sticky;top:0;z-index:30;padding:16px 24px 0}
+  .topbar{max-width:1340px;margin:0 auto;display:flex;align-items:center;gap:18px;
+    background:var(--glass);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);
+    border:1px solid var(--line);border-radius:20px;padding:12px 16px;box-shadow:0 12px 40px rgba(20,8,50,.35)}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:21px;letter-spacing:-.02em;white-space:nowrap}
+  .brand .logo{width:32px;height:32px;border-radius:11px;display:grid;place-items:center;
+    background:linear-gradient(135deg,rgba(255,255,255,.35),rgba(255,255,255,.05));border:1px solid var(--line2);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+  .pool{display:flex;gap:6px;margin-left:6px}
+  .pchip{padding:7px 15px;border-radius:13px;background:rgba(255,255,255,.06);border:1px solid var(--line);min-width:98px}
+  .pchip .k{font-size:9.5px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+  .pchip .v{font-size:15px;font-weight:700;letter-spacing:-.01em;margin-top:1px}
+  .pchip .v.up{color:var(--mint)}
+  .spacer{flex:1}
+  .wallet{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.1);border:1px solid var(--line2);
+    border-radius:999px;padding:6px 7px 6px 15px;cursor:pointer;transition:.2s;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+  .wallet:hover{background:rgba(255,255,255,.18)}
+  .wallet .em{font-size:12.5px;font-weight:600}
+  .wallet .ad{font-size:11px;color:var(--aqua)}
+  .ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--violet));display:grid;place-items:center;font-weight:800;color:#2a0e3a}
+
+  .wrap{max-width:1340px;margin:0 auto;padding:30px 24px 90px}
+  .pagehead{text-align:center;margin-bottom:30px}
+  .pagehead .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+    background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:6px 14px;margin-bottom:16px}
+  .ldot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint);animation:pl 1.6s infinite}
+  @keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+  .pagehead h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(30px,4vw,46px);letter-spacing:-.02em;line-height:1.05}
+  .pagehead h1 em{font-style:italic;color:var(--mint)}
+  .pagehead p{color:var(--dim);font-size:15px;margin-top:10px;max-width:560px;margin-left:auto;margin-right:auto}
+
+  .grid{display:grid;grid-template-columns:minmax(360px,1fr) minmax(560px,1.5fr);gap:24px;align-items:start}
+
+  .glass{background:var(--glass);backdrop-filter:blur(28px) saturate(1.5);-webkit-backdrop-filter:blur(28px) saturate(1.5);
+    border:1px solid var(--line);border-radius:26px;box-shadow:0 24px 70px rgba(15,6,40,.45), inset 0 1px 0 rgba(255,255,255,.25)}
+  .glass-h{display:flex;align-items:center;justify-content:space-between;padding:22px 24px 0}
+  .glass-h h2{font-family:'Fraunces',serif;font-weight:600;font-size:20px;letter-spacing:-.01em}
+  .pill{font-size:10.5px;letter-spacing:.08em;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:5px 11px;text-transform:uppercase}
+
+  .body{padding:18px 24px 24px}
+  .field{margin-bottom:16px}
+  .lab{font-size:11px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-bottom:9px;font-weight:600}
+  .inp{border:1px solid var(--line2);border-radius:16px;background:rgba(255,255,255,.06);padding:14px 16px;transition:.18s}
+  .inp.focus{background:rgba(255,255,255,.12);border-color:rgba(138,255,193,.5);box-shadow:0 0 0 4px rgba(138,255,193,.14)}
+  .inp .r{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .addr{font-size:16px;font-weight:700;color:var(--aqua)}
+  .resolved{display:flex;align-items:center;gap:9px;margin-top:10px;font-size:13px;color:var(--dim)}
+  .resolved b{color:var(--txt);font-weight:700}
+  .vchk{width:19px;height:19px;border-radius:50%;background:rgba(138,255,193,.22);color:var(--mint);display:grid;place-items:center;font-size:11px}
+  .amt{display:flex;align-items:baseline;gap:8px}
+  .amt b{font-size:27px;font-weight:800;letter-spacing:-.02em}
+  .amt span{color:var(--mint);font-size:13px;font-weight:700}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .file{display:flex;align-items:center;gap:12px;border:1px dashed var(--line2);border-radius:16px;padding:12px 14px;background:rgba(255,255,255,.05)}
+  .file .ic{width:34px;height:34px;border-radius:10px;background:rgba(255,158,203,.2);color:var(--rose);display:grid;place-items:center;font-size:11px;font-weight:800}
+  .file .nm{font-size:13.5px;font-weight:700}
+  .file .sub{font-size:11px;color:var(--dim)}
+  .file .badge{margin-left:auto;font-size:10.5px;color:var(--mint);border:1px solid var(--line);border-radius:8px;padding:3px 8px}
+  .btn{width:100%;border:0;border-radius:16px;padding:15px;font-family:'Manrope';font-weight:800;font-size:15px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:9px;letter-spacing:.01em}
+  .btn-primary{background:linear-gradient(135deg,#ffffff,#e9e2ff);color:var(--ink);box-shadow:0 14px 36px rgba(0,0,0,.28)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 48px rgba(0,0,0,.4)}
+  .btn-accept{background:linear-gradient(135deg,var(--mint),#3fdc97);color:#06210f;box-shadow:0 14px 36px rgba(63,220,151,.4)}
+  .btn-accept:hover{transform:translateY(-2px);box-shadow:0 22px 54px rgba(63,220,151,.55)}
+  .hint{text-align:center;color:var(--dim);font-size:11px;margin-top:13px}
+
+  /* AI */
+  .gemtag{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;letter-spacing:.06em;color:var(--violet);
+    background:rgba(201,169,255,.14);border:1px solid rgba(201,169,255,.32);border-radius:999px;padding:5px 11px;text-transform:uppercase}
+  .ai-top{display:grid;grid-template-columns:auto 1fr;gap:26px;padding:22px 24px}
+  .ring{position:relative;width:170px;height:170px}
+  .ring .center{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+  .ring .sc{font-size:54px;font-weight:800;line-height:1;letter-spacing:-.03em}
+  .ring .max{font-size:13px;color:var(--dim)}
+  .ring .lbl{margin-top:7px;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mint);text-transform:uppercase}
+  .kpis{display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .kpi{border:1px solid var(--line);border-radius:16px;padding:14px 17px;background:rgba(255,255,255,.05)}
+  .kpi .k{font-size:11px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase;font-weight:600}
+  .kpi .v{font-size:30px;font-weight:800;margin-top:3px;letter-spacing:-.02em}
+  .kpi .v.g{color:var(--mint)}.kpi .v.a{color:var(--gold)}
+  .kbar{height:7px;border-radius:5px;background:rgba(255,255,255,.14);margin-top:9px;overflow:hidden}
+  .kbar i{display:block;height:100%;border-radius:5px}
+
+  .payoff{margin:6px 24px 0;border:1px solid var(--line2);border-radius:22px;padding:24px;position:relative;overflow:hidden;
+    background:linear-gradient(120deg,rgba(138,255,193,.14),rgba(127,230,255,.08));box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+  .payoff .cap{font-size:11px;letter-spacing:.16em;color:var(--mint);text-transform:uppercase;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .payoff .hero{font-family:'Fraunces',serif;font-weight:600;letter-spacing:-.03em;line-height:.92;font-size:clamp(50px,6.5vw,82px)}
+  .payoff .hero small{font-family:'Manrope';font-size:.3em;color:var(--mint);font-weight:800;margin-left:10px}
+  .ledger{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+  .led{font-size:12px;color:var(--dim);border:1px solid var(--line);border-radius:11px;padding:7px 12px;background:rgba(255,255,255,.06)}
+  .led b{color:var(--txt);font-weight:700}
+  .led .g{color:var(--mint)}.led .a{color:var(--gold)}
+
+  .rationale{padding:22px 24px 4px}
+  .rationale .q{font-family:'Fraunces',serif;font-style:italic;font-size:17px;line-height:1.55;color:#f3f0ff}
+  .rationale .q b{font-style:normal;color:var(--mint);font-weight:600}
+  .factors{display:flex;flex-wrap:wrap;gap:10px;padding:18px 24px}
+  .factor{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;border:1px solid var(--line);border-radius:13px;padding:9px 14px;background:rgba(255,255,255,.07)}
+  .factor .ic{color:var(--mint)}
+  .ai-foot{padding:0 24px 24px;display:flex;align-items:center;gap:16px}
+  .ai-foot .note{flex:1;font-size:11px;color:var(--dim);line-height:1.6}
+  .ai-foot .btn{width:auto;padding:16px 30px}
+
+  @media(max-width:1120px){.grid{grid-template-columns:1fr}.pool{display:none}}
+  @media(max-width:580px){.ai-top{grid-template-columns:1fr;justify-items:center}.two{grid-template-columns:1fr}.topbar{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <span class="logo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 17l5-8 4 5 3-3 4 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      Anticipo
+    </div>
+    <div class="pool">
+      <div class="pchip"><div class="k">Pool TVL</div><div class="v num">$248,500</div></div>
+      <div class="pchip"><div class="k">Available</div><div class="v num up">$112,300</div></div>
+      <div class="pchip"><div class="k">Yield APY</div><div class="v num up">9.2%</div></div>
+      <div class="pchip"><div class="k">Active</div><div class="v num">14</div></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="wallet">
+      <div><div class="em">maria@tiendaroja.mx</div><div class="ad num">0x70…79C8</div></div>
+      <div class="ava">M</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="pagehead">
+    <span class="eyebrow"><span class="ldot"></span>AI invoice factoring · Arbitrum</span>
+    <h1>Turn one invoice into <em>cash today.</em></h1>
+    <p>Don't wait 45 days. Anticipo's AI prices your advance instantly and the pool pays you in USDC now.</p>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT -->
+    <section class="glass">
+      <div class="glass-h"><h2>Finance an invoice</h2><span class="pill">Draft</span></div>
+      <div class="body">
+        <div class="field">
+          <div class="lab">Buyer (payer) wallet</div>
+          <div class="inp focus">
+            <div class="r"><span class="addr num">0x3C44…93BC</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--dim)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+            <div class="resolved"><span class="vchk">✓</span>Resolves to <b>Soriana S.A. de C.V.</b></div>
+          </div>
+        </div>
+        <div class="two">
+          <div class="field"><div class="lab">Face amount</div>
+            <div class="inp"><div class="amt"><b class="num">100.00</b><span>USDC</span></div></div></div>
+          <div class="field"><div class="lab">Due date</div>
+            <div class="inp"><div class="r"><span style="font-size:15px;font-weight:700">Jul 15, 2026</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--dim)" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div>
+              <div class="resolved" style="margin-top:6px">≈ 45 days out</div></div></div>
+        </div>
+        <div class="field">
+          <div class="lab">Invoice document</div>
+          <div class="file"><span class="ic">PDF</span>
+            <div><div class="nm">factura-0427.pdf</div><div class="sub">hashed on submit</div></div>
+            <span class="badge">attached</span></div>
+        </div>
+        <button class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2l1.6 4.8L18 8l-4.4 1.2L12 14l-1.6-4.8L6 8l4.4-1.2z"/></svg>
+          Get AI quote</button>
+        <div class="hint">Email login · no seed phrase · gas-less on Arbitrum</div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="glass">
+      <div class="glass-h">
+        <h2>AI Underwriting</h2>
+        <span class="gemtag"><span class="ldot" style="background:var(--violet);box-shadow:0 0 8px var(--violet)"></span>powered by Gemini</span>
+      </div>
+
+      <div class="ai-top">
+        <div class="ring">
+          <svg width="170" height="170" viewBox="0 0 170 170">
+            <defs><linearGradient id="rg9" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8affc1"/><stop offset="1" stop-color="#7fe6ff"/></linearGradient></defs>
+            <circle cx="85" cy="85" r="70" stroke="rgba(255,255,255,.16)" stroke-width="13" fill="none"/>
+            <circle cx="85" cy="85" r="70" stroke="url(#rg9)" stroke-width="13" fill="none" stroke-linecap="round"
+              stroke-dasharray="439.8" stroke-dashoffset="351.8" transform="rotate(-90 85 85)"/>
+          </svg>
+          <div class="center">
+            <div class="sc" style="color:var(--mint)">20</div>
+            <div class="max">/ 100</div>
+            <div class="lbl">Low risk</div>
+          </div>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><div class="k">Advance ratio</div><div class="v g num">80%</div>
+            <div class="kbar"><i style="width:80%;background:linear-gradient(90deg,#8affc1,#7fe6ff)"></i></div></div>
+          <div class="kpi"><div class="k">Underwriting fee</div><div class="v a num">2.0%</div>
+            <div class="kbar"><i style="width:18%;background:linear-gradient(90deg,#ffd479,#ff9ecb)"></i></div></div>
+        </div>
+      </div>
+
+      <div class="payoff">
+        <div class="cap"><span class="ldot"></span>You receive now</div>
+        <div class="hero num">80.00<small>USDC</small></div>
+        <div class="ledger">
+          <span class="led">Receive now <b class="g">80.00</b></span>
+          <span class="led">Fee <b class="a">2.00</b></span>
+          <span class="led">Buyer repays <b>100.00</b> at due date</span>
+        </div>
+      </div>
+
+      <div class="rationale">
+        <p class="q">“Soriana has paid <b>6 of 6</b> prior invoices on time, averaging <b>4 days early</b>. A strong, consistent payment record supports a high advance at a low fee.”</p>
+      </div>
+      <div class="factors">
+        <span class="factor"><span class="ic">✓</span>6/6 on-time</span>
+        <span class="factor"><span class="ic">⏱</span>Avg 4 days early</span>
+        <span class="factor"><span class="ic">⊘</span>0 defaults</span>
+        <span class="factor"><span class="ic">◈</span>$420k paid on-chain</span>
+      </div>
+      <div class="ai-foot">
+        <div class="note">Quote locks ratio &amp; fee for 5 minutes.<br>Receivable tokenized → pool releases USDC instantly.</div>
+        <button class="btn btn-accept">Accept &amp; get 80 USDC
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>
+        </button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="variant-tag">variant 09 — glassmorphic</div>
+</body>
+</html>
