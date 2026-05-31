@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+@layer base {
+  body {
+    @apply bg-cream text-ink antialiased font-sans;
+    background-image:
+      radial-gradient(1200px 600px at 88% -8%, rgba(233, 169, 59, 0.3), transparent 60%),
+      radial-gradient(900px 500px at -6% 12%, rgba(63, 125, 91, 0.2), transparent 55%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+}
