@@ -27,3 +27,15 @@ export function formatDate(sec: number | bigint): string {
   const ms = Number(sec) * 1000;
   return new Date(ms).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
+
+/** Block-explorer tx URL for the chain (Arbiscan for Arbitrum; empty for local anvil). */
+export function txUrl(chainId: number, hash: string): string | null {
+  if (chainId === 421614) return `https://sepolia.arbiscan.io/tx/${hash}`;
+  if (chainId === 42161) return `https://arbiscan.io/tx/${hash}`;
+  return null; // local anvil / unknown
+}
+
+/** Days from now until a unix-seconds timestamp (negative = overdue). */
+export function daysUntil(sec: number | bigint): number {
+  return Math.round((Number(sec) * 1000 - Date.now()) / 86_400_000);
+}
