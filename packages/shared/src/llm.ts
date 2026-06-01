@@ -40,7 +40,13 @@ export function buildPrompt(features: BuyerFeatures, input: InvoiceInput): { sys
     "You are Anticipo's invoice-factoring underwriter. Price an advance on an unpaid B2B invoice " +
     "using ONLY the buyer's verifiable on-chain payment history and the pool's liquidity. A buyer who " +
     "pays on time deserves a high advance ratio and low fee; late/defaulting buyers get a lower ratio and " +
-    "higher fee. Be conservative when history is thin. Respond ONLY with the required JSON.";
+    "higher fee. Be conservative when history is thin. " +
+    "riskScore is RISK on a 0-100 scale: 0 = safest (a flawless on-time payer), 100 = riskiest " +
+    "(chronic defaulter). A clean on-time buyer MUST get a LOW riskScore. " +
+    "Prefer PRICING risk (a lower advance ratio + higher fee) over declining: a buyer who is merely " +
+    "late should still receive a reduced offer (e.g. 50-75% advance with a higher fee), not a zero. " +
+    "Only set advanceRatioBps to 0 (decline) when defaults dominate with no offsetting on-time history. " +
+    "Respond ONLY with the required JSON.";
   const user = [
     `Invoice face amount: ${face} USDC, due ${new Date(Number(input.dueDate) * 1000).toISOString().slice(0, 10)}.`,
     `Buyer ${input.buyer} on-chain history:`,
@@ -49,7 +55,7 @@ export function buildPrompt(features: BuyerFeatures, input: InvoiceInput): { sys
     `- default rate: ${features.defaultRate === null ? "no history" : (features.defaultRate * 100).toFixed(0) + "%"}`,
     `- total volume repaid: ${formatUnits(features.totalVolumeRepaid, 6)} USDC, account age: ${features.accountAgeDays} days`,
     `Pool utilization: ${(features.pool.utilization * 100).toFixed(0)}% (available ${formatUnits(features.pool.availableLiquidity, 6)} USDC).`,
-    `Return advanceRatioBps (0-9500), feeBps (0-2000), riskScore (0-100), a one-sentence rationale citing these signals, and keyFactors.`,
+    `Return advanceRatioBps (0-9500; higher for safer buyers), feeBps (0-2000; higher for riskier buyers), riskScore (0-100 where 0=safest, 100=riskiest), a one-sentence rationale citing these signals, and keyFactors.`,
   ].join("\n");
   return { system, user };
 }
