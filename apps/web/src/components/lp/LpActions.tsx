@@ -86,7 +86,7 @@ export function LpActions() {
   const explorerUrl = lp.hash ? txUrl(cfg.chainId, lp.hash) : null;
 
   return (
-    <Card>
+    <Card className="p-[30px]">
       <CardTitle>Provide liquidity</CardTitle>
       <p className="mt-1 text-[13px] text-ink-soft">
         Deposit USDC, receive aUSDC shares, earn the spread on financed invoices.
