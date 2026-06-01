@@ -26,3 +26,11 @@ packages/contracts/broadcast/
 /shots/
 /.playwright-mcp/
 .vercel
+
+# internal — kept local, not for the public submission repo
+/BRIEF.md
+/HANDOFF.md
+/docs/superpowers/
+/docs/submission/
+/apps/web/design-lab/
+/*.png
