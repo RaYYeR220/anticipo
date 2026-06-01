@@ -31,7 +31,7 @@ export function readPublicConfig(env: Partial<PublicEnv>): PublicConfig {
       ? arbitrumSepolia
       : defineChain({
           id: chainId,
-          name: `chain-${chainId}`,
+          name: chainId === 31337 ? "Local Anvil" : `Chain ${chainId}`,
           nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
           rpcUrls: { default: { http: [rpcUrl] } },
         });
