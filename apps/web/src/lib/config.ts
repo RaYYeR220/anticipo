@@ -48,7 +48,19 @@ export function readPublicConfig(env: Partial<PublicEnv>): PublicConfig {
   };
 }
 
-// Convenience for the browser (reads process.env.NEXT_PUBLIC_* inlined by Next at build).
+// Convenience for the browser. Each NEXT_PUBLIC_* MUST be read as a direct static
+// `process.env.NEXT_PUBLIC_X` member expression so Next inlines the literal into the
+// client bundle — aliasing `process.env` to an object skips inlining (vars become
+// undefined in the browser and this throws on hydration).
 export function publicConfig(): PublicConfig {
-  return readPublicConfig(process.env as unknown as Partial<PublicEnv>);
+  return readPublicConfig({
+    NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
+    NEXT_PUBLIC_RPC_URL: process.env.NEXT_PUBLIC_RPC_URL,
+    NEXT_PUBLIC_USDC_ADDRESS: process.env.NEXT_PUBLIC_USDC_ADDRESS,
+    NEXT_PUBLIC_POOL_ADDRESS: process.env.NEXT_PUBLIC_POOL_ADDRESS,
+    NEXT_PUBLIC_REGISTRY_ADDRESS: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS,
+    NEXT_PUBLIC_CONTROLLER_ADDRESS: process.env.NEXT_PUBLIC_CONTROLLER_ADDRESS,
+    NEXT_PUBLIC_PRIVY_APP_ID: process.env.NEXT_PUBLIC_PRIVY_APP_ID,
+    NEXT_PUBLIC_PIMLICO_API_KEY: process.env.NEXT_PUBLIC_PIMLICO_API_KEY,
+  });
 }
