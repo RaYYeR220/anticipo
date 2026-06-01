@@ -52,8 +52,8 @@
 **Voiceover:**
 > "Under the hood, the AI's decision is an EIP-712 quote — signed, and verified on-chain. The receivable is minted as an NFT, the advance comes from an ERC-4626 vault, and when the buyer pays, the pool is repaid with yield."
 
-### 7 — Close · `1:42–1:52` · landing `/` or a logo card
-**On screen:** Cut back to the landing hero / logo. End card with **live URL `anticipo-red.vercel.app`**.
+### 7 — Close · `1:42–1:52` · branded end card `/end`
+**On screen:** Cut to the ready-made full-screen end card at **`anticipo-red.vercel.app/end`** (logo + tagline + tech chips + live & GitHub URLs + ETHMexico). Hold it through the final line.
 **Voiceover:**
 > "Email login, gasless, AI-priced, settled on Arbitrum. Cobra hoy — no en cuarenta y cinco días. This is Anticipo."
 
