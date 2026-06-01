@@ -17,7 +17,7 @@ Roadmap = 4 phases, each: brainstorm→spec→plan→build. Build is **subagent-
 - **Phase 1 — contracts — DONE, on `main`.** Foundry, 29 tests. MockUSDC, LiquidityPool (ERC-4626), InvoiceRegistry (ERC-721 + buyer reputation), FactoringController (EIP-712 quote verify, settle, default), `script/Deploy.s.sol`.
 - **Phase 2 — `@anticipo/shared` SDK — DONE, on `main`.** vitest, 15 tests. `underwrite()` = on-chain features → Gemini (OpenRouter) → clamps → EIP-712 sign. Anvil round-trip proves the TS signature is accepted on-chain.
 - **Phase 3 — `apps/web` Next.js frontend — DONE, MERGED to `main`.** 8 web tests. Design **#11 "warm-LATAM"** (chosen from a 20-variant gallery in `apps/web/design-lab/`; see `design-lab/CHOICE.md`) → `tailwind.config.ts` + `globals.css` + `components/ui/*`. All 4 views (landing/SMB/LP/Buyer) + `/api/underwrite` + wagmi hooks. **Verified live** against a seeded local anvil: real on-chain reads + **live Gemini underwriting** (clean buyer → high advance/low fee, late-payer → graded worse terms). `next build` clean.
-- **Phase 4 — testnet deploy + public demo — LIVE (deploy/seed/host DONE).** Plan: `docs/superpowers/plans/2026-06-01-anticipo-phase4-deploy-demo.md`. **Remaining:** demo video + DoraHacks submission (user); optional Privy AA (Task 5, deferred to "в конце").
+- **Phase 4 — testnet deploy + public demo — LIVE (deploy/seed/host/AA DONE).** Plan: `docs/superpowers/plans/2026-06-01-anticipo-phase4-deploy-demo.md`. **Remaining:** demo video + DoraHacks submission (user).
 
 ## Phase 4 — LIVE deployment (Arbitrum Sepolia, chain 421614)
 - **Live app:** https://anticipo-red.vercel.app · **Repo:** https://github.com/RaYYeR220/anticipo (public, `gh` as RaYYeR220)
@@ -35,7 +35,7 @@ Roadmap = 4 phases, each: brainstorm→spec→plan→build. Build is **subagent-
 ## Phase 4 — what's left
 - **Demo video (user):** record on the live app; ~90s script in `docs/submission/anticipo-dorahacks.md` (clean→risky contrast is the money shot).
 - **DoraHacks submission (user):** writeup drafted in the same doc; paste live + repo + video URLs; submit before **2026-06-05 18:00**.
-- **Optional Privy AA (Task 5):** deferred ("в конце"); needs `NEXT_PUBLIC_PRIVY_APP_ID` + `NEXT_PUBLIC_PIMLICO_API_KEY`. Injected wallet is the working default.
+- **Account abstraction (Task 5) — DONE & LIVE on prod.** Email login (Privy) → ERC-4337 smart wallet → gas-sponsored userops via Pimlico paymaster; verified end-to-end (sponsored tx, no gas). Env-gated by `NEXT_PUBLIC_PRIVY_APP_ID` (+ `NEXT_PUBLIC_PIMLICO_API_KEY`); without it the app falls back to injected (MetaMask). Code: `lib/wallet.ts` (`useWallet()` abstraction: active address = smart wallet, `sendTx` routes sponsored vs wagmi), `components/wallet/{Injected,Privy}WalletProvider.tsx`, `Providers.tsx` picks the tree. **Privy dashboard config (one-time, done):** allowed domain `anticipo-red.vercel.app`; email login on; Smart wallets enabled (Safe) with Pimlico bundler+paymaster URL `https://api.pimlico.io/v2/421614/rpc?apikey=…` for chain 421614. To disable AA: remove the 2 NEXT_PUBLIC_PRIVY/PIMLICO env vars on Vercel + redeploy → injected.
 - **Minor polish:** add a favicon (console 404 only); optional testnet-ETH faucet link in footer.
 - The contracts/SDK are stable — don't rebuild Phases 1–3.
 

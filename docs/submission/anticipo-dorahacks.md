@@ -40,8 +40,10 @@ Four Solidity contracts (Foundry, 29 tests), an EIP-712 SDK (`@anticipo/shared`,
 - **InvoiceRegistry** — ERC-721 receivable + per-buyer reputation (on-time / late / defaulted, volume).
 - **FactoringController** — verifies the EIP-712 quote, mints the receivable, advances from the pool, settles on payment, writes off defaults after a grace period.
 
-## Ethereum / L2 stack (15%)
-Arbitrum (Sepolia for the demo) as cheap settlement; native-style USDC; EIP-712 signed quotes; ERC-4626 + ERC-721 standards; wagmi/viem frontend. Account-abstraction-ready (Privy email-login + Pimlico sponsored gas is env-gated; injected wallet is the working default).
+## Ethereum / L2 stack + account abstraction (15%)
+Arbitrum (Sepolia for the demo) as cheap settlement; native-style USDC; EIP-712 signed quotes; ERC-4626 + ERC-721 standards; wagmi/viem frontend.
+
+**Account abstraction is live (not just "ready"):** sign in with an **email** (Privy) → an **ERC-4337 smart wallet** is created → every action (accept financing, deposit, pay) is a **gas-sponsored userop** via a **Pimlico paymaster**. No seed phrase, no testnet ETH — verified end to end on the live app. The injected (MetaMask) path remains as an env-gated fallback.
 
 ## Demo (10%)
 - **Live app:** https://anticipo-red.vercel.app
@@ -67,19 +69,20 @@ Arbitrum (General + Startups) · Ethereum Mexico (General + Startups).
 Show the landing hero, tagline "Cobra hoy, no en 45 días."
 
 **0:12–0:40 — The load-bearing AI, clean buyer (SMB view).**
-Enter a $12,000 invoice for **Soriana**. Hit *Get AI quote*.
-> "Our underwriter agent reads Soriana's on-chain history — three invoices, all paid on time — and prices the advance live."
-Show the gauge: low risk, **~95% advance, ~1% fee**, rationale citing the on-time history. Accept → USDC lands in the wallet.
+Sign in with **email** (no seed phrase) → a smart wallet is created. Enter a $12,000 invoice for **Soriana**. Hit *Get AI quote*.
+> "I logged in with just an email. Our underwriter agent reads Soriana's on-chain history — three invoices, all paid on time — and prices the advance live."
+Show the gauge: low risk, **92% advance, 1.2% fee**, rationale citing the on-time history. Accept → the transaction is **gas-sponsored** (no ETH needed) and USDC lands in the smart wallet.
+> "No gas, no wallet pop-up — the paymaster covers it."
 
 **0:40–1:05 — Same invoice, risky buyer (proves the AI is real).**
 New quote, same $12,000, buyer **Comercial Mexicana**.
 > "Same invoice, different buyer — one that's paid late. The AI prices the risk: lower advance, higher fee, and it tells you why."
-Show **~70% advance, ~8.5% fee**, rationale citing the late payments. This contrast is the money shot.
+Show **70% advance, 6% fee** (risk 55), rationale citing the 67% lateness. This contrast is the money shot.
 
 **1:05–1:25 — The pool (LP view) + settlement.**
 > "Liquidity providers fund the advances and earn the fees as yield."
 Show TVL + share-price/yield. Then the buyer pays an invoice → it settles → pool repaid, yield ticks up.
 
 **1:25–1:35 — Tech close.**
-> "Arbitrum, EIP-712 signed quotes, an ERC-4626 pool, and a Gemini underwriter. That's Anticipo."
+> "Arbitrum, EIP-712 signed quotes, an ERC-4626 pool, a Gemini underwriter, and email login with gas-sponsored smart wallets. That's Anticipo."
 Card with the stack + live URL.
