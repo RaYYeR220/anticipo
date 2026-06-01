@@ -17,10 +17,27 @@ Roadmap = 4 phases, each: brainstorm→spec→plan→build. Build is **subagent-
 - **Phase 1 — contracts — DONE, on `main`.** Foundry, 29 tests. MockUSDC, LiquidityPool (ERC-4626), InvoiceRegistry (ERC-721 + buyer reputation), FactoringController (EIP-712 quote verify, settle, default), `script/Deploy.s.sol`.
 - **Phase 2 — `@anticipo/shared` SDK — DONE, on `main`.** vitest, 15 tests. `underwrite()` = on-chain features → Gemini (OpenRouter) → clamps → EIP-712 sign. Anvil round-trip proves the TS signature is accepted on-chain.
 - **Phase 3 — `apps/web` Next.js frontend — DONE, MERGED to `main`.** 8 web tests. Design **#11 "warm-LATAM"** (chosen from a 20-variant gallery in `apps/web/design-lab/`; see `design-lab/CHOICE.md`) → `tailwind.config.ts` + `globals.css` + `components/ui/*`. All 4 views (landing/SMB/LP/Buyer) + `/api/underwrite` + wagmi hooks. **Verified live** against a seeded local anvil: real on-chain reads + **live Gemini underwriting** (clean buyer → high advance/low fee, late-payer → graded worse terms). `next build` clean.
-- **Phase 4 — testnet deploy + public demo — NEXT, not started.** Plan: `docs/superpowers/plans/2026-06-01-anticipo-phase4-deploy-demo.md`.
+- **Phase 4 — testnet deploy + public demo — LIVE (deploy/seed/host DONE).** Plan: `docs/superpowers/plans/2026-06-01-anticipo-phase4-deploy-demo.md`. **Remaining:** demo video + DoraHacks submission (user); optional Privy AA (Task 5, deferred to "в конце").
 
-## Phase 4 — immediate next action
-Follow `docs/superpowers/plans/2026-06-01-anticipo-phase4-deploy-demo.md`. Order: (1) deploy contracts to Arbitrum Sepolia via `Deploy.s.sol`; (2) write+run `SeedSepolia.s.sol` (fund actor EOAs with gas, seed Soriana clean + ComMex late); (3) host `apps/web` on Vercel with testnet env; (4) verify the live demo; (5) optional Privy AA; (6) demo video + DoraHacks submission. **Gated on user creds** (testnet RPC + funded deployer key + Vercel account — see plan's Prerequisites). Create branch `feat/phase4-deploy` off `main` first. The contracts/SDK are stable — don't rebuild Phases 1–3.
+## Phase 4 — LIVE deployment (Arbitrum Sepolia, chain 421614)
+- **Live app:** https://anticipo-red.vercel.app · **Repo:** https://github.com/RaYYeR220/anticipo (public, `gh` as RaYYeR220)
+- **Contracts (deployed + seeded + verified via cast):**
+  - MockUSDC `0x5F4d518FF3EeFeA5Ba55E2C365e80dB005032A81`
+  - LiquidityPool `0x7Af6d4a94818eA00ccC7104397C5D23a2De9FFbD`
+  - InvoiceRegistry `0x1fCd2F496A9B8F533Cc450AE494546e5dE56D918`
+  - FactoringController `0xF7a76A45DEd795261c2Ad3F439F635492529Cd49`
+  - Underwriter == deployer `0xCDe533a0982402D703f9262c6c2beCE502DE32c9` (throwaway testnet key; in gitignored `packages/contracts/.env`)
+- **Seed state:** pool TVL **504,575 USDC**; Soriana (`0x3C44…93BC`) 3 on-time / 230k vol; ComMex (`0x90F7…b906`) 1 on-time + 2 late.
+- **Verified LIVE underwriting** (curl `/api/underwrite`): Soriana → risk 10 / 92% / 1.2% ; ComMex → risk 55 / 70% / 6%. Same $12k invoice, terms from real on-chain history.
+- **Vercel:** project `anticipo` (`prj_TezMjkRTAZaqpWgJgxGYMcD2w1O1`, org `team_lvJBfWjFQPhKr1nbnuS9RkQn`), Root Directory `apps/web`, framework nextjs. CLI authed as `rayyer220` (token at `%APPDATA%/xdg.data/com.vercel.cli/auth.json`). All 10 env vars set (NEXT_PUBLIC_* + server OPENROUTER_*/UNDERWRITER_PRIVATE_KEY/RPC_URL). **Redeploy:** `vercel deploy --prod --yes` from repo root (project linked via `.vercel/`). Env via API `…/v10/projects/anticipo/env?upsert=true`.
+- **Reproduce deploy from scratch:** fund a key → `packages/contracts/.env` (DEPLOYER_PRIVATE_KEY=UNDERWRITER, addresses filled after) → `forge script script/Deploy.s.sol:Deploy --rpc-url $ARBITRUM_SEPOLIA_RPC_URL --broadcast` → write addresses to `.env` → `forge script script/SeedSepolia.s.sol:SeedSepolia --rpc-url … --broadcast --slow`.
+
+## Phase 4 — what's left
+- **Demo video (user):** record on the live app; ~90s script in `docs/submission/anticipo-dorahacks.md` (clean→risky contrast is the money shot).
+- **DoraHacks submission (user):** writeup drafted in the same doc; paste live + repo + video URLs; submit before **2026-06-05 18:00**.
+- **Optional Privy AA (Task 5):** deferred ("в конце"); needs `NEXT_PUBLIC_PRIVY_APP_ID` + `NEXT_PUBLIC_PIMLICO_API_KEY`. Injected wallet is the working default.
+- **Minor polish:** add a favicon (console 404 only); optional testnet-ETH faucet link in footer.
+- The contracts/SDK are stable — don't rebuild Phases 1–3.
 
 ## Local demo (already working — to bring back up after compact)
 The app ran live locally on anvil. To restore:

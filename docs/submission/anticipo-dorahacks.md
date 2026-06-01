@@ -1,7 +1,9 @@
 # Anticipo — DoraHacks BUIDL submission (draft)
 
-> Fill the **[LIVE URL]**, **[VIDEO URL]**, **[REPO URL]** placeholders once Phase 4 Tasks 1–3 + 6 land.
+> **Live app:** https://anticipo-red.vercel.app · **Repo:** https://github.com/RaYYeR220/anticipo · **Video:** [VIDEO URL — record on the live app]
 > Written to the ETHMexico2026 rubric: **30% code · 25% innovation · 20% LATAM impact · 15% Ethereum/L2 · 10% demo.**
+
+> **Deployed on Arbitrum Sepolia (chain 421614):** MockUSDC `0x5F4d518FF3EeFeA5Ba55E2C365e80dB005032A81` · LiquidityPool `0x7Af6d4a94818eA00ccC7104397C5D23a2De9FFbD` · InvoiceRegistry `0x1fCd2F496A9B8F533Cc450AE494546e5dE56D918` · FactoringController `0xF7a76A45DEd795261c2Ad3F439F635492529Cd49` · Underwriter `0xCDe533a0982402D703f9262c6c2beCE502DE32c9`.
 
 ---
 
@@ -26,10 +28,10 @@ This is the differentiator vs a generic "AI payments assistant." The **same $12,
 
 | Buyer | On-chain history | AI risk | Advance | Fee |
 |---|---|---|---|---|
-| **Soriana** (clean) | 3 invoices, all paid on time | low | **~95%** | **~1%** |
-| **Comercial Mexicana** (late) | 1 on-time + 2 late | higher | **~70%** | **~8.5%** |
+| **Soriana** (clean) | 3 invoices, all on time (230k volume) | **10/100** | **92%** | **1.2%** |
+| **Comercial Mexicana** (late) | 1 on-time + 2 late (67% lateness) | **55/100** | **70%** | **6%** |
 
-The terms are driven by data, not cosmetics — pricing risk rather than a binary approve/deny. (Gemini via OpenRouter, `temperature: 0` for stable, reproducible demo numbers; structured-JSON output clamped to safe on-chain bounds.)
+*(Actual live numbers from the deployed app on Arbitrum Sepolia.)* The terms are driven by data, not cosmetics — pricing risk rather than a binary approve/deny. Gemini reads the real on-chain reputation and even cites it: Soriana → *"perfect 100% on-time repayment history across 230,000 USDC"*; ComMex → *"high lateness rate of 67% … warrant a conservative advance ratio and elevated fee."* (`temperature: 0` for stable, reproducible demo numbers; structured-JSON output clamped to safe on-chain bounds.)
 
 ## What's on-chain (code — 30%)
 Four Solidity contracts (Foundry, 29 tests), an EIP-712 SDK (`@anticipo/shared`, 15 tests), and a Next.js frontend (8 tests). 52 tests total.
@@ -42,9 +44,9 @@ Four Solidity contracts (Foundry, 29 tests), an EIP-712 SDK (`@anticipo/shared`,
 Arbitrum (Sepolia for the demo) as cheap settlement; native-style USDC; EIP-712 signed quotes; ERC-4626 + ERC-721 standards; wagmi/viem frontend. Account-abstraction-ready (Privy email-login + Pimlico sponsored gas is env-gated; injected wallet is the working default).
 
 ## Demo (10%)
-- **Live app:** [LIVE URL]
-- **Video (~90s):** [VIDEO URL]
-- **Repo:** [REPO URL]
+- **Live app:** https://anticipo-red.vercel.app
+- **Video (~90s):** [VIDEO URL — record on the live app]
+- **Repo:** https://github.com/RaYYeR220/anticipo
 - Walk: clean buyer → high advance / low fee → accept → USDC arrives; then a risky buyer → worse terms citing the late history; then the LP view (deposit → TVL + yield) and buyer payment settling the invoice.
 
 ## Honest scope / limitations
