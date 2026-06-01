@@ -113,33 +113,29 @@ function Underline() {
 function HeroVisual() {
   return (
     <div className="relative mx-auto w-full max-w-[27rem]">
-      {/* floating "live" underwriter gauge */}
-      <div className="absolute -right-4 -top-8 z-10 hidden sm:block">
-        <div className="relative">
-          <span
-            aria-hidden
-            className="absolute inset-2 animate-pulse-ring rounded-full"
-          />
-          <div className="relative rounded-full border-2 border-sun/45 bg-card p-1.5 shadow-warm">
-            <ScoreGauge score={18} size={80} />
-          </div>
-        </div>
-      </div>
-
       <Card className="p-7">
-        {/* invoice header — amount + due stacked on the left so the floating
-            gauge can own the top-right corner without overlapping anything */}
-        <div className="pr-20">
-          <span className="text-[11px] font-bold uppercase tracking-[0.5px] text-ink-soft">
-            Invoice &middot; #A-2041
-          </span>
-          <div className="mt-1 font-display text-[26px] font-black leading-none tabular-nums">
-            $12,000{" "}
-            <span className="text-[15px] font-semibold text-ink-soft">USDC</span>
+        {/* invoice header — amount + due on the left, the live underwriter gauge
+            tucked into the top-right corner so it reads right next to the amount */}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-[0.5px] text-ink-soft">
+              Invoice &middot; #A-2041
+            </span>
+            <div className="mt-1 font-display text-[26px] font-black leading-none tabular-nums">
+              $12,000{" "}
+              <span className="text-[15px] font-semibold text-ink-soft">USDC</span>
+            </div>
+            <Badge tone="sun" glyph="⏳" className="mt-3">
+              Due in 45 days
+            </Badge>
           </div>
-          <Badge tone="sun" glyph="⏳" className="mt-3">
-            Due in 45 days
-          </Badge>
+
+          <div className="relative shrink-0">
+            <span aria-hidden className="absolute inset-1 animate-pulse-ring rounded-full" />
+            <div className="relative rounded-full border-2 border-sun/45 bg-card p-1.5 shadow-warm">
+              <ScoreGauge score={18} size={72} />
+            </div>
+          </div>
         </div>
 
         {/* flow connector */}
