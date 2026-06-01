@@ -1,7 +1,7 @@
 "use client";
 import { AppHeader } from "@/components/AppHeader";
 import { PapelBanner, Ribbon } from "@/components/ui";
-import { PoolStats } from "@/components/lp/PoolStats";
+import { PoolStats, PoolPosition } from "@/components/lp/PoolStats";
 import { LpActions } from "@/components/lp/LpActions";
 
 export default function LpPage() {
@@ -15,9 +15,13 @@ export default function LpPage() {
           note="Earn yield financing real invoices · Arbitrum"
           className="mb-8 mt-1.5"
         />
-        <div className="grid items-start gap-[30px] lg:grid-cols-[1.14fr_0.86fr]">
+        {/* Full-width TVL headline, then a balanced two-column row. */}
+        <div className="flex flex-col gap-[30px]">
           <PoolStats />
-          <LpActions />
+          <div className="grid items-stretch gap-[30px] lg:grid-cols-2">
+            <PoolPosition />
+            <LpActions />
+          </div>
         </div>
       </main>
       <PapelBanner variant="agave" className="mt-10" />

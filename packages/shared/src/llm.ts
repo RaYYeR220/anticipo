@@ -87,6 +87,7 @@ export class OpenRouterLLM implements UnderwriterLLM {
         { role: "system", content: system },
         { role: "user", content: user },
       ],
+      temperature: 0, // deterministic-ish pricing so the same history yields stable terms
       response_format: { type: "json_schema", json_schema: DECISION_JSON_SCHEMA },
     } as any);
     const content = res.choices?.[0]?.message?.content;
