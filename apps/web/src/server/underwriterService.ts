@@ -32,7 +32,7 @@ export interface UnderwriteServiceResult {
   quote: Quote;
   signature: `0x${string}`;
   toJSON(): {
-    decision: UnderwritingDecision;
+    decision: Omit<UnderwritingDecision, "advanceAmount"> & { advanceAmount: string };
     quote: Record<string, string | number>;
     signature: string;
   };
@@ -42,17 +42,17 @@ export interface UnderwriteServiceResult {
 // service would use a per-underwriter monotonic counter or a DB sequence.
 async function allocateNonce(cfg: UnderwriteServiceConfig, controllerAbi: readonly unknown[]): Promise<bigint> {
   let nonce = BigInt(Math.floor((cfg.now?.() ?? Date.now() / 1000)) * 1000 + Math.floor(Math.random() * 1000));
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 8; i++) {
     const used = (await cfg.client.readContract({
       address: cfg.addresses.controller,
       abi: controllerAbi,
       functionName: "usedNonce",
       args: [nonce],
     })) as boolean;
-    if (!used) return nonce;
+    if (!used) return nonce; // only ever return a nonce confirmed unused
     nonce += 1n;
   }
-  return nonce;
+  throw new Error("allocateNonce: could not find a free nonce after 8 attempts");
 }
 
 export async function runUnderwrite(
@@ -88,7 +88,8 @@ export async function runUnderwrite(
     signature,
     toJSON() {
       return {
-        decision,
+        // advanceAmount is a bigint — serialize it or JSON.stringify (NextResponse.json) throws.
+        decision: { ...decision, advanceAmount: decision.advanceAmount.toString() },
         quote: {
           smb: quote.smb,
           buyer: quote.buyer,

@@ -5,14 +5,18 @@ import { publicConfig } from "@/lib/config";
 
 export type InvoiceStatus = 0 | 1 | 2 | 3; // None, Financed, Repaid, Defaulted
 
+// Mirrors InvoiceRegistry.Invoice (the on-chain struct getInvoice returns), plus the id.
 export interface InvoiceView {
   id: bigint;
   smb: `0x${string}`;
   buyer: `0x${string}`;
   faceAmount: bigint;
   dueDate: bigint;
-  fundedAt: bigint;
+  advanceRatioBps: number;
+  feeBps: number;
+  advanceAmount: bigint;
   status: InvoiceStatus;
+  docHash: `0x${string}`;
 }
 
 export function useInvoices(filter: { smb?: `0x${string}`; buyer?: `0x${string}` }) {

@@ -73,5 +73,8 @@ describe("runUnderwrite", () => {
     expect(typeof json.quote.faceAmount).toBe("string");
     expect(json.quote.faceAmount).toBe("100000000");
     expect(typeof json.signature).toBe("string");
+    // regression: decision.advanceAmount must be serialized too, or NextResponse.json throws
+    expect(typeof json.decision.advanceAmount).toBe("string");
+    expect(() => JSON.stringify(json)).not.toThrow();
   });
 });
