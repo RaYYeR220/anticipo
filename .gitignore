@@ -25,3 +25,4 @@ packages/contracts/broadcast/
 # design-lab scratch
 /shots/
 /.playwright-mcp/
+.vercel
