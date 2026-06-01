@@ -12,6 +12,14 @@ const nextConfig: NextConfig = {
       ".mjs": [".mts", ".mjs"],
       ".cjs": [".cts", ".cjs"],
     };
+    // Optional React-Native / node deps pulled transitively by wallet SDKs
+    // (@metamask/sdk, walletconnect). Not used in the browser — stub them so webpack
+    // doesn't emit "module not found" noise.
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      "@react-native-async-storage/async-storage": false,
+      "pino-pretty": false,
+    };
     return config;
   },
 };

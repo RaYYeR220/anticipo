@@ -1,5 +1,5 @@
 "use client";
-import { useAccount } from "wagmi";
+import { useWallet } from "@/lib/wallet";
 import { Badge, Button, Card, CardTitle } from "@/components/ui";
 import { useInvoices, type InvoiceStatus, type InvoiceView } from "@/hooks/useInvoices";
 import { usePayInvoice } from "@/hooks/usePayInvoice";
@@ -22,7 +22,7 @@ const PAY_LABEL: Record<string, string> = {
 };
 
 export function BuyerInvoiceList() {
-  const { address } = useAccount();
+  const { address } = useWallet();
   const { invoices, isLoading } = useInvoices({ buyer: address });
   const pay = usePayInvoice();
   const usdc = useUsdc(address);

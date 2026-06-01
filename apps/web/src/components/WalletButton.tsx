@@ -1,29 +1,43 @@
 "use client";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { injected } from "wagmi/connectors";
 import { AccountPill, Button } from "@/components/ui";
 import { shortAddr } from "@/lib/format";
+import { useWallet } from "@/lib/wallet";
 
 /**
- * Email-login-styled wallet control. Connected → the warm AccountPill (click to
- * disconnect). Disconnected → a primary "Conectar" button (injected connector).
- * Privy email login layers on top when NEXT_PUBLIC_PRIVY_APP_ID is configured.
+ * Wallet control over the unified abstraction. Injected mode → "Conectar wallet" (MetaMask).
+ * Privy mode → "Entrar con email" (email login → sponsored smart wallet); when connected we
+ * flag the gasless smart wallet with a "sin gas" chip.
  */
 export function WalletButton() {
-  const { address, isConnected } = useAccount();
-  const { connect, isPending } = useConnect();
-  const { disconnect } = useDisconnect();
+  const { mode, address, isConnected, isConnecting, sponsored, connect, disconnect } = useWallet();
 
   if (isConnected && address) {
     return (
-      <button onClick={() => disconnect()} title="Disconnect" className="transition-transform hover:-translate-y-0.5">
-        <AccountPill address={shortAddr(address)} />
-      </button>
+      <div className="flex items-center gap-2">
+        {sponsored ? (
+          <span className="hidden rounded-full border-[1.5px] border-agave/30 bg-agave/[0.12] px-2.5 py-1 text-[11.5px] font-bold text-agave-deep sm:inline">
+            ⚡ sin gas
+          </span>
+        ) : null}
+        <button
+          onClick={disconnect}
+          title="Disconnect"
+          className="transition-transform hover:-translate-y-0.5"
+        >
+          <AccountPill address={shortAddr(address)} />
+        </button>
+      </div>
     );
   }
+
+  const label = isConnecting
+    ? "Conectando…"
+    : mode === "privy"
+      ? "Entrar con email"
+      : "Conectar wallet";
   return (
-    <Button variant="primary" onClick={() => connect({ connector: injected() })} disabled={isPending}>
-      {isPending ? "Conectando…" : "Conectar wallet"}
+    <Button variant="primary" onClick={connect} disabled={isConnecting}>
+      {label}
     </Button>
   );
 }

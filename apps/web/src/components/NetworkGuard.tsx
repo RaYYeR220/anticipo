@@ -1,20 +1,19 @@
 "use client";
 import { useMemo } from "react";
-import { useAccount, useSwitchChain } from "wagmi";
+import { useWallet } from "@/lib/wallet";
 import { publicConfig } from "@/lib/config";
 
 /**
- * Wrong-network guard for the public testnet demo. When a wallet is connected but on a
- * different chain than the app targets (Arbitrum Sepolia in production), show a warm banner
- * with a one-click switch — wagmi falls back to `wallet_addEthereumChain` for chains the
- * wallet doesn't know yet (viem's `arbitrumSepolia` carries the params). Renders nothing
- * when disconnected or already on the right chain, so the header stays clean in the happy path.
+ * Wrong-network guard for the public testnet demo. Relevant only for injected wallets — the
+ * Privy smart wallet always operates on the configured chain, so this renders nothing there.
+ * When an injected wallet is connected but on a different chain, shows a warm banner with a
+ * one-click switch to the app chain.
  */
 export function NetworkGuard() {
   const cfg = useMemo(() => publicConfig(), []);
-  const { isConnected, chainId } = useAccount();
-  const { switchChain, isPending } = useSwitchChain();
+  const { mode, isConnected, chainId, switchToTarget, isSwitching } = useWallet();
 
+  if (mode === "privy") return null;
   if (!isConnected || chainId === undefined || chainId === cfg.chainId) return null;
 
   return (
@@ -25,11 +24,11 @@ export function NetworkGuard() {
         <span className="font-bold text-terracotta-deep">{cfg.chain.name}</span>.
       </p>
       <button
-        onClick={() => switchChain({ chainId: cfg.chainId })}
-        disabled={isPending}
+        onClick={switchToTarget}
+        disabled={isSwitching}
         className="rounded-btn bg-grad-primary px-4 py-2.5 text-[13.5px] font-semibold text-white shadow-btn-primary transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isPending ? "Cambiando…" : `Cambiar a ${cfg.chain.name}`}
+        {isSwitching ? "Cambiando…" : `Cambiar a ${cfg.chain.name}`}
       </button>
     </div>
   );

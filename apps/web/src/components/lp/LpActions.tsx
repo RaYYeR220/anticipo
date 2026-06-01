@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useWallet } from "@/lib/wallet";
 import { Card, CardTitle, Button, Field, Input, InputShell } from "@/components/ui";
 import { useLp } from "@/hooks/useLp";
 import { useUsdc } from "@/hooks/useUsdc";
@@ -28,7 +28,7 @@ function safeParse(value: string): bigint {
 }
 
 export function LpActions() {
-  const { address } = useAccount();
+  const { address } = useWallet();
   const lp = useLp(address);
   const usdc = useUsdc(address);
   const { shares, sharePrice, available } = usePool(address);

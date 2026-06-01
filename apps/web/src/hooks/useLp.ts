@@ -1,16 +1,17 @@
 "use client";
 import { useState } from "react";
-import { useConfig, useWriteContract } from "wagmi";
+import { useConfig } from "wagmi";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import { usdcAbi, poolAbi } from "@/lib/contracts";
 import { publicConfig } from "@/lib/config";
+import { useWallet } from "@/lib/wallet";
 import { type FlowStatus, isBusy } from "./flow";
 
 /** LP deposit (approve USDC → pool, then deposit) and withdraw (redeem shares). */
 export function useLp(account?: `0x${string}`) {
   const { addresses } = publicConfig();
   const config = useConfig();
-  const { writeContractAsync } = useWriteContract();
+  const { sendTx } = useWallet();
   const [status, setStatus] = useState<FlowStatus>("idle");
   const [error, setError] = useState<string>();
   const [hash, setHash] = useState<`0x${string}`>();
@@ -20,7 +21,7 @@ export function useLp(account?: `0x${string}`) {
     try {
       setError(undefined);
       setStatus("approving");
-      const approveHash = await writeContractAsync({
+      const approveHash = await sendTx({
         address: addresses.usdc,
         abi: usdcAbi,
         functionName: "approve",
@@ -28,7 +29,7 @@ export function useLp(account?: `0x${string}`) {
       });
       await waitForTransactionReceipt(config, { hash: approveHash });
       setStatus("pending");
-      const h = await writeContractAsync({
+      const h = await sendTx({
         address: addresses.pool,
         abi: poolAbi,
         functionName: "deposit",
@@ -51,7 +52,7 @@ export function useLp(account?: `0x${string}`) {
     try {
       setError(undefined);
       setStatus("pending");
-      const h = await writeContractAsync({
+      const h = await sendTx({
         address: addresses.pool,
         abi: poolAbi,
         functionName: "redeem",

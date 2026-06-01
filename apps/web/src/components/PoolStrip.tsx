@@ -1,12 +1,12 @@
 "use client";
-import { useAccount } from "wagmi";
+import { useWallet } from "@/lib/wallet";
 import { Stat } from "@/components/ui";
 import { usePool } from "@/hooks/usePool";
 import { formatUsdc } from "@/lib/format";
 
 /** Live pool-stats strip used in the app header. */
 export function PoolStrip() {
-  const { address } = useAccount();
+  const { address } = useWallet();
   const { totalAssets, available, outstanding, utilization } = usePool(address);
   return (
     <div className="flex flex-wrap gap-2">

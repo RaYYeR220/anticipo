@@ -1,12 +1,12 @@
 "use client";
-import { useAccount } from "wagmi";
+import { useWallet } from "@/lib/wallet";
 import { Card, CardTitle, Stat, Badge } from "@/components/ui";
 import { usePool } from "@/hooks/usePool";
 import { formatUsdc } from "@/lib/format";
 
 /** Full-width pool headline: TVL, utilization bar, liquidity split. */
 export function PoolStats() {
-  const { address } = useAccount();
+  const { address } = useWallet();
   const { totalAssets, available, outstanding, utilization } = usePool(address);
   const utilPct = Math.min(100, Math.max(0, utilization * 100));
 
@@ -53,7 +53,7 @@ export function PoolStats() {
 
 /** The connected LP's position — value hero, share-of-pool, shares & price, yield note. */
 export function PoolPosition() {
-  const { address } = useAccount();
+  const { address } = useWallet();
   const { shares, positionValue, sharePrice, totalSupply } = usePool(address);
   const shareOfPool = totalSupply > 0n ? (Number(shares) / Number(totalSupply)) * 100 : 0;
   const yieldPct = (sharePrice - 1) * 100;

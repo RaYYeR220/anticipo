@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useWallet } from "@/lib/wallet";
 import { AppHeader } from "@/components/AppHeader";
 import { PapelBanner, Ribbon } from "@/components/ui";
 import { InvoiceForm, type InvoiceFormValues } from "@/components/smb/InvoiceForm";
@@ -10,7 +10,7 @@ import { useFinance } from "@/hooks/useFinance";
 import { requestUnderwrite } from "@/lib/underwriteClient";
 
 export default function SmbPage() {
-  const { address } = useAccount();
+  const { address } = useWallet();
   const [uw, setUw] = useState<UnderwriteState>({ status: "idle" });
   const finance = useFinance();
 
