@@ -4,7 +4,7 @@
 
 - **Live app:** https://anticipo-red.vercel.app
 - **Network:** Arbitrum Sepolia (chain `421614`)
-- **Demo video:** _add link_
+- **Demo video:** https://youtu.be/ktx-p0CrDwY
 
 Built for **ETHMexico 2026** (with Bitso).
 
